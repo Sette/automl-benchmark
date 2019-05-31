@@ -78,6 +78,8 @@ def load_dataset():
     for i in ['CB', 'LB', 'LCB', 'LWB', 'RB', 'RCB', 'RWB','GK']:
       df.loc[df.Position == i , 'Pos'] = 'Defender' 
     
+    target_names = df["Pos"].unique()
+
     le_class = preprocessing.LabelEncoder()
     
     df['Pos'] = le_class.fit_transform(df['Pos'])
@@ -86,4 +88,4 @@ def load_dataset():
     
     df.drop(columns=["Position","Pos"],inplace=True)
     
-    return df, y
+    return df, y,target_names
