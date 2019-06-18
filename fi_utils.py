@@ -8,19 +8,31 @@ Este é um arquivo de script temporário.
 import pandas as pd
 from sklearn import preprocessing
 
-def load_dataset():
+def load_dont_overfit():
+    fifa_filepath_train = "datasets/dont-overfit/train.csv"
+    fifa_filepath_test = "datasets/dont-overfit/test.csv"
+
+    data_train = pd.read_csv(fifa_filepath_train)
+    data_test = pd.read_csv(fifa_filepath_test)
+    
+    y_train = pd.to_numeric(data_train['target'],downcast='integer')
+
+    data_train.drop(columns=['target'],inplace=True)
+    
+    return data_train,data_test,y_train
+
+
+
+def load_fifa():
     # Path of the file to read
-    fifa_filepath = "datasets/fifadata.csv"
+    fifa_filepath = "datasets/fifa/fifadata.csv"
     # Read the file into a variable iris_data
     data = pd.read_csv(fifa_filepath)
-    # Print the first 5 rows of the data
-    data.head()
-    
+
     
     df2 = data.loc[:, 'Crossing':'Release Clause']
     df1 = data[['Age', 'Overall', 'Value', 'Wage', 'Preferred Foot', 'Skill Moves', 'Position', 'Height', 'Weight']]
     df = pd.concat([df1, df2], axis=1)
-    
     df = df.dropna()
     
     def value_to_int(df_value):
@@ -62,12 +74,10 @@ def load_dataset():
     
     df['Height_int'] = df['Height'].apply(height_to_int)
     
-    
     df = df.drop(['Value', 'Wage', 'Release Clause', 'Weight', 'Height'], axis=1)
     
     le_foot = preprocessing.LabelEncoder()
     df["Preferred Foot"] = le_foot.fit_transform(df["Preferred Foot"].values)
-    
     
     for i in ['ST', 'CF', 'LF', 'LS', 'LW', 'RF', 'RS', 'RW']:
       df.loc[df.Position == i , 'Pos'] = 'Strikers' 
