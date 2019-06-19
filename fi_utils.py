@@ -8,16 +8,57 @@ Este é um arquivo de script temporário.
 import pandas as pd
 from sklearn import preprocessing
 
-def load_dont_overfit():
-    fifa_filepath_train = "datasets/dont-overfit/train.csv"
-    fifa_filepath_test = "datasets/dont-overfit/test.csv"
+def load_santander_customer():
+    santander_filepath_train = "datasets/santander-customer/train.csv"
+    santander_filepath_test = "datasets/santander-customer/test.csv"
 
-    data_train = pd.read_csv(fifa_filepath_train)
-    data_test = pd.read_csv(fifa_filepath_test)
+    data_train = pd.read_csv(santander_filepath_train)
+    data_test = pd.read_csv(santander_filepath_test)
     
     y_train = pd.to_numeric(data_train['target'],downcast='integer')
 
-    data_train.drop(columns=['target'],inplace=True)
+    data_train.drop(columns=['target','ID_code'],inplace=True)
+    
+    return data_train,data_test,y_train
+
+def load_microsoft_malware():
+    microsoft_filepath_train = "datasets/microsoft-malware/train.csv"
+    microsoft_filepath_test = "datasets/microsoft-malware/test.csv"
+
+    data_train = pd.read_csv(microsoft_filepath_train)
+    data_test = pd.read_csv(microsoft_filepath_test)
+    
+    y_train = pd.to_numeric(data_train['target'],downcast='integer')
+
+    data_train.drop(columns=['target','id'],inplace=True)
+    
+    return data_train,data_test,y_train
+
+
+def load_porto_seguro():
+    porto_filepath_train = "datasets/porto-seguro/train.csv"
+    porto_filepath_test = "datasets/porto-seguro/test.csv"
+
+    data_train = pd.read_csv(porto_filepath_train)
+    data_test = pd.read_csv(porto_filepath_test)
+    
+    y_train = pd.to_numeric(data_train['target'],downcast='integer')
+
+    data_train.drop(columns=['target','id'],inplace=True)
+    
+    return data_train,data_test,y_train
+
+def load_dont_overfit():
+    overfit_filepath_train = "datasets/dont-overfit/train.csv"
+    overfit_filepath_test = "datasets/dont-overfit/test.csv"
+
+
+    data_train = pd.read_csv(overfit_filepath_train)
+    data_test = pd.read_csv(overfit_filepath_test)
+    
+    y_train = pd.to_numeric(data_train['target'],downcast='integer')
+
+    data_train.drop(columns=['target','id'],inplace=True)
     
     return data_train,data_test,y_train
 
