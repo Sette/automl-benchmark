@@ -74,7 +74,7 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
     submission_time = pd.DataFrame({
         "name": name,
         "name_dataset": name_dataset,
-        "time":time
+        "time":str(time)
     })
 
     submission = pd.DataFrame({
