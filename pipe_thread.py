@@ -24,17 +24,7 @@ all_datasets = [
 
 threads = list()
 
-'''
-all_models = [
-        ("hyperopt", hyperopt_fit_pred),
-        ("autosk", autosk_fit_pred),
-        ("tpot", tpot_fit_pred),
-]
-'''
-
-
-def tpot_fit_pred(X_train,y_train,X_test):
-    
+def tpot_fit_pred(X_train,y_train,X_test,id_test):    
     start_time = timer(None)
     tp.fit(X_train, y_train)
     tp.export('tpot_pipeline_dont_overfit.py')
@@ -42,29 +32,29 @@ def tpot_fit_pred(X_train,y_train,X_test):
     submission_time.append((name,timer(start_time)))
 
     submission = pd.DataFrame({
-        "id": X_test["id"],
+        "id": id_test,
         "target": preds
     })
 
     submissions.append(("tpot",submission))
 
 
-def autosk_fit_pred(X_train,y_train,X_test):
+def autosk_fit_pred(X_train,y_train,X_test,id_test):
     start_time = timer(None)
-    ak.fit(X_train, y_train, dataset_name='dont_overfit')
+    ak.fit(X_train, y_train)
     ak.refit(X_train, y_train)
     preds =  ak.predict(X_test)
 
     submission_time.append((name,timer(start_time)))
 
     submission = pd.DataFrame({
-        "id": X_test["id"],
+        "id": id_test,
         "target": preds
     })
 
     submissions.append(("autosk",submission))
 
-def hyperopt_fit_pred(X_train,y_train,X_test):
+def hyperopt_fit_pred(X_train,y_train,X_test,id_test):
     start_time = timer(None)
     hp.fit(X_train.as_matrix(),y_train.as_matrix())
     preds =  hp.predict(X_test.as_matrix())
@@ -72,12 +62,13 @@ def hyperopt_fit_pred(X_train,y_train,X_test):
     submission_time.append((name,timer(start_time)))
 
     submission = pd.DataFrame({
-        "id": X_test["id"],
+        "id": id_test,
         "target": preds
     })
 
     submissions.append(("hyperopt",submission))
     
+
 all_models = [
     ("hyperopt", hyperopt_fit_pred),
 ]
@@ -90,12 +81,12 @@ for name_dataset, dataset in all_datasets:
     submissions = []
     submission_time = []
 
-    X_train, y_train, X_test = dataset()
+    X_train, y_train, X_test, id_test = dataset()
 
     for name, model in all_models:
         print("Training with ", name)
         start_time = timer(None)
-        x = threading.Thread(target=model, args=(X_train.copy(),y_train.copy(),X_test.copy()))
+        x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test))
         threads.append(x)
         x.start()
         
