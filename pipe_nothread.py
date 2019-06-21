@@ -106,5 +106,5 @@ for name_dataset, dataset in all_datasets:
 
     for name, model in all_models:
         print("Training with ", name)
-        mode(X_train,y_train,X_test,id_test,name,name_dataset)
+        model(X_train,y_train,X_test,id_test,name,name_dataset)
         
