@@ -9,14 +9,12 @@ import autosklearn.classification
 import pandas as pd
 from hpsklearn import HyperoptEstimator
 
-'''
 all_datasets = [
         ("dont_overfit", load_dont_overfit),
         ("porto_seguro", load_porto_seguro),
         ("santander_customer", hyperopt_fit_pred),
         ("microsoft_malware", load_microsoft_malware),
     ]
-'''
 
 all_datasets = [
         ("dont_overfit", load_dont_overfit),

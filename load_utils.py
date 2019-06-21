@@ -43,7 +43,6 @@ def load_porto_seguro():
     data_test = pd.read_csv(porto_filepath_test)
     
     y_train = pd.to_numeric(data_train['target'],downcast='integer')
-
     data_train.drop(columns=['target','id'],inplace=True)
     
     return data_train,y_train,data_test
@@ -57,11 +56,10 @@ def load_dont_overfit():
     y_train = pd.to_numeric(data_train['target'],downcast='integer')
 
     data_train.drop(columns=['target','id'],inplace=True)
-    id_list = data_test.id
+    id_test = data_test.id
     data_test.drop(columns=['id'],inplace=True)
-    print(id_list)
     
-    return data_train,y_train,data_test
+    return data_train,y_train,data_test,id_test
 
 
 
