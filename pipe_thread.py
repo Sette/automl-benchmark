@@ -10,10 +10,10 @@ import pandas as pd
 from hpsklearn import HyperoptEstimator
 
 all_datasets = [
+        ("dont_overfit", load_dont_overfit),
         ("porto_seguro", load_porto_seguro),
         ("santander_customer", load_santander_customer),
         ("microsoft_malware", load_microsoft_malware),
-        ("dont_overfit", load_dont_overfit),
     ]
 
 submissions = []
@@ -106,7 +106,6 @@ for name_dataset, dataset in all_datasets:
 
     for name, model in all_models:
         print("Training with ", name)
-        start_time = timer(None)
         x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test,name,name_dataset))
         threads.append(x)
         x.start()
