@@ -13,7 +13,7 @@ all_datasets = [
         ("dont_overfit", load_dont_overfit),
         ("porto_seguro", load_porto_seguro),
         ("santander_customer", load_santander_customer),
-        ("microsoft_malware", load_microsoft_malware),
+        ("microsoft_malware", load_microsoft_malware)
     ]
 
 submissions = []
@@ -29,7 +29,7 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
     submission_time = pd.DataFrame({
         "name": name,
         "name_dataset": name_dataset,
-        "time":timer(start_time),
+        "time":timer(start_time)
     })
 
     submission = pd.DataFrame({
@@ -54,7 +54,7 @@ def autosk_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
     submission_time = pd.DataFrame({
         "name": name,
         "name_dataset": name_dataset,
-        "time":timer(start_time),
+        "time":timer(start_time)
     })
 
     submission = pd.DataFrame({
@@ -74,7 +74,7 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
     submission_time = pd.DataFrame({
         "name": name,
         "name_dataset": name_dataset,
-        "time":timer(start_time),
+        "time":timer(start_time)
     })
 
     submission = pd.DataFrame({
@@ -90,7 +90,7 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
 all_models = [
     ("hyperopt", hyperopt_fit_pred),
     ("autosk", autosk_fit_pred),
-    ("tpot", tpot_fit_pred),
+    ("tpot", tpot_fit_pred)
 ]
 
 for name_dataset, dataset in all_datasets:
