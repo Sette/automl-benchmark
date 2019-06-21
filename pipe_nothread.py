@@ -10,15 +10,12 @@ import pandas as pd
 from hpsklearn import HyperoptEstimator
 
 all_datasets = [
-        ("dont_overfit", load_dont_overfit),
         ("porto_seguro", load_porto_seguro),
-        ("santander_customer", hyperopt_fit_pred),
+        ("santander_customer", load_santander_customer),
         ("microsoft_malware", load_microsoft_malware),
+        ("dont_overfit", load_dont_overfit),
     ]
 
-all_datasets = [
-        ("dont_overfit", load_dont_overfit),
-    ]
 submissions = []
 threads = list()
 
@@ -69,6 +66,8 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test):
 
 all_models = [
     ("hyperopt", hyperopt_fit_pred),
+    ("autosk", autosk_fit_pred),
+    ("tpot", tpot_fit_pred),
 ]
 
 for name_dataset, dataset in all_datasets:

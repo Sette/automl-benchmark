@@ -18,8 +18,10 @@ def load_santander_customer():
     y_train = pd.to_numeric(data_train['target'],downcast='integer')
 
     data_train.drop(columns=['target','ID_code'],inplace=True)
+    id_test = data_test.ID_code
+    data_test.drop(columns=['ID_code'],inplace=True)
     
-    return data_train,y_train,data_test
+    return data_train,y_train,data_test,id_test
 
 def load_microsoft_malware():
     microsoft_filepath_train = "datasets/microsoft-malware/train.csv"
@@ -31,8 +33,11 @@ def load_microsoft_malware():
     y_train = pd.to_numeric(data_train['target'],downcast='integer')
 
     data_train.drop(columns=['target','id'],inplace=True)
+    id_test = data_test.id
+    data_test.drop(columns=['id'],inplace=True)
     
-    return data_train,y_train,data_test
+    
+    return data_train,y_train,data_test,id_test
 
 
 def load_porto_seguro():
@@ -44,8 +49,10 @@ def load_porto_seguro():
     
     y_train = pd.to_numeric(data_train['target'],downcast='integer')
     data_train.drop(columns=['target','id'],inplace=True)
+    id_test = data_test.id
+    data_test.drop(columns=['id'],inplace=True)
     
-    return data_train,y_train,data_test
+    return data_train,y_train,data_test,id_test
 
 def load_dont_overfit():
     overfit_filepath_train = "datasets/dont-overfit/train.csv"
