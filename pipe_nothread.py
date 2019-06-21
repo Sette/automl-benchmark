@@ -21,9 +21,9 @@ all_datasets = [
 all_datasets = [
         ("dont_overfit", load_dont_overfit),
     ]
-
-threads = list()
 submissions = []
+threads = list()
+
 def tpot_fit_pred(X_train,y_train,X_test,id_test):    
     start_time = timer(None)
     tp.fit(X_train, y_train)
@@ -86,9 +86,7 @@ for name_dataset, dataset in all_datasets:
     for name, model in all_models:
         print("Training with ", name)
         start_time = timer(None)
-        x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test))
-        threads.append(x)
-        x.start()
+        model(X_train,y_train,X_test,id_test)
 
     for name, sub in submissions:
         sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
