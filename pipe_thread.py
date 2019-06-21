@@ -9,68 +9,88 @@ import autosklearn.classification
 import pandas as pd
 from hpsklearn import HyperoptEstimator
 
-'''
 all_datasets = [
-        ("dont_overfit", load_dont_overfit),
         ("porto_seguro", load_porto_seguro),
-        ("santander_customer", hyperopt_fit_pred),
+        ("santander_customer", load_santander_customer),
         ("microsoft_malware", load_microsoft_malware),
-    ]
-'''
-
-all_datasets = [
         ("dont_overfit", load_dont_overfit),
     ]
 
-threads = list()
 submissions = []
-def tpot_fit_pred(X_train,y_train,X_test,id_test):    
+threads = list()
+
+def tpot_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):    
     start_time = timer(None)
     tp.fit(X_train, y_train)
     tp.export('tpot_pipeline_dont_overfit.py')
     preds = tp.predict(X_test)
-    submission_time.append((name,timer(start_time)))
+
+
+    submission_time = pd.DataFrame({
+        "name": name,
+        "name_dataset": name_dataset,
+        "time":timer(start_time),
+    })
 
     submission = pd.DataFrame({
         "id": id_test,
         "target": preds
     })
 
+    submission_time.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
+
+    submission.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
+    
+
     submissions.append(("tpot",submission))
 
 
-def autosk_fit_pred(X_train,y_train,X_test,id_test):
+def autosk_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
     start_time = timer(None)
     ak.fit(X_train, y_train)
     ak.refit(X_train, y_train)
     preds =  ak.predict(X_test)
 
-    submission_time.append((name,timer(start_time)))
+    submission_time = pd.DataFrame({
+        "name": name,
+        "name_dataset": name_dataset,
+        "time":timer(start_time),
+    })
 
     submission = pd.DataFrame({
         "id": id_test,
         "target": preds
     })
 
-    submissions.append(("autosk",submission))
+    submission_time.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
 
-def hyperopt_fit_pred(X_train,y_train,X_test,id_test):
+    submission.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
+
+def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
     start_time = timer(None)
     hp.fit(X_train.as_matrix(),y_train.as_matrix())
     preds =  hp.predict(X_test.as_matrix())
 
-    submission_time.append((name,timer(start_time)))
+    submission_time = pd.DataFrame({
+        "name": name,
+        "name_dataset": name_dataset,
+        "time":timer(start_time),
+    })
 
     submission = pd.DataFrame({
         "id": id_test,
         "target": preds
     })
 
-    submissions.append(("hyperopt",submission))
+    submission_time.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
+
+    submission.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
     
 
 all_models = [
     ("hyperopt", hyperopt_fit_pred),
+    ("autosk", autosk_fit_pred),
+    ("tpot", tpot_fit_pred),
 ]
 
 for name_dataset, dataset in all_datasets:
@@ -83,16 +103,10 @@ for name_dataset, dataset in all_datasets:
 
     X_train, y_train, X_test, id_test = dataset()
 
+
     for name, model in all_models:
         print("Training with ", name)
         start_time = timer(None)
-        x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test))
+        x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test,name,name_dataset))
         threads.append(x)
         x.start()
-
-    for name, sub in submissions:
-        sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
-
-        
-    for name, sub in submission_time:
-        sub.to_csv(name_dataset+'_'+name+'_submission_time.csv', index=False)
