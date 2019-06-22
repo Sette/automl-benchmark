@@ -11,7 +11,7 @@ import pandas as pd
 h2o.init()
 
 all_datasets = [
-        ("dont_overfit", load_dont_overfit),
+        ("dont_overfit", load_taxi_fare),
         ("porto_seguro", load_porto_seguro),
         ("santander_customer", load_santander_customer),
         ("microsoft_malware", load_microsoft_malware)

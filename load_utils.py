@@ -15,7 +15,7 @@ def load_santander_customer():
     data_train = pd.read_csv(santander_filepath_train)
     data_test = pd.read_csv(santander_filepath_test)
     
-    y_train = pd.to_numeric(data_train['target'],downcast='integer')
+    y_train = pd.to_numeric(data_train['target'])
 
     data_train.drop(columns=['target','ID_code'],inplace=True)
     id_test = data_test.ID_code
@@ -30,7 +30,7 @@ def load_microsoft_malware():
     data_train = pd.read_csv(microsoft_filepath_train)
     data_test = pd.read_csv(microsoft_filepath_test)
     
-    y_train = pd.to_numeric(data_train['target'],downcast='integer')
+    y_train = pd.to_numeric(data_train['target'])
 
     data_train.drop(columns=['target','id'],inplace=True)
     id_test = data_test.id
@@ -47,7 +47,7 @@ def load_porto_seguro():
     data_train = pd.read_csv(porto_filepath_train)
     data_test = pd.read_csv(porto_filepath_test)
     
-    y_train = pd.to_numeric(data_train['target'],downcast='integer')
+    y_train = pd.to_numeric(data_train['target'])
     data_train.drop(columns=['target','id'],inplace=True)
     id_test = data_test.id
     data_test.drop(columns=['id'],inplace=True)
@@ -60,7 +60,7 @@ def load_dont_overfit():
     data_train = pd.read_csv(overfit_filepath_train)
     data_test = pd.read_csv(overfit_filepath_test)
     
-    y_train = pd.to_numeric(data_train['target'],downcast='integer')
+    y_train = pd.to_numeric(data_train['target'])
 
     data_train.drop(columns=['target','id'],inplace=True)
     id_test = data_test.id
@@ -68,6 +68,19 @@ def load_dont_overfit():
     
     return data_train,y_train,data_test,id_test
 
+def load_taxi_fare():
+    overfit_filepath_train = "datasets/taxi-fare/train.csv"
+    overfit_filepath_test = "datasets/taxi-fare/test.csv"
+    data_train = pd.read_csv(overfit_filepath_train)
+    data_test = pd.read_csv(overfit_filepath_test)
+    
+    y_train = pd.to_numeric(data_train['target'])
+
+    data_train.drop(columns=['target','id'],inplace=True)
+    id_test = data_test.id
+    data_test.drop(columns=['id'],inplace=True)
+    
+    return data_train,y_train,data_test,id_test
 
 
 def load_fifa():
