@@ -1,13 +1,14 @@
-import logging
 import threading
-import time
-
+import h2o
+from h2o.automl import H2OAutoML
 from tpot import TPOTClassifier
 from load_utils import *
 from benchmark_utils import timer
 import autosklearn.classification
-import pandas as pd
 from hpsklearn import HyperoptEstimator
+import pandas as pd
+
+h2o.init()
 
 all_datasets = [
         ("dont_overfit", load_dont_overfit),
@@ -16,61 +17,85 @@ all_datasets = [
         ("microsoft_malware", load_microsoft_malware)
     ]
 
+all_datasets = [
+        ("dont_overfit", load_dont_overfit)
+    ]
+
 submissions = []
 threads = list()
 
-def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):    
+def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
+    X_train['target'] = y_train
     start_time = timer(None)
-    tp.fit(X_train, y_train)
-    tp.export('tpot_pipeline_dont_overfit.py')
-    preds = tp.predict(X_test)
+    train = h2o.H2OFrame.from_python(X_train)
+    test = h2o.H2OFrame.from_python(X_test)
+    
+    # Identify predictors and response
+    x = train.columns
+    y = "target"
 
+    # (limited to 1 hour max runtime by default)
+    aml = H2OAutoML()
+    aml.train(x=x, y=y, training_frame=train)
+    time = timer(start_time)
+    preds = aml.predict(test)
 
-    submission_time = pd.DataFrame({
-        "name": name,
-        "name_dataset": name_dataset,
-        "time":timer(start_time)
-    })
+    time_out = open(name_dataset+'_'+'tpot',"w") 
+    time_out.write(time) 
+    time_out.close() 
 
     submission = pd.DataFrame({
         "id": id_test,
         "target": preds
     })
 
-    submission_time.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
+    submission.to_csv(name_dataset+'_'+'tpot'+'_submission.csv', index=False)
 
-    submission.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
-    
 
-    submissions.append(("tpot",submission))
+
+def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):    
+    start_time = timer(None)
+    tp.fit(X_train, y_train)
+    tp.export('tpot_pipeline_dont_overfit.py')
+    time = timer(start_time)
+    preds = tp.predict(X_test)
+
+    time_out = open(name_dataset+'_'+'tpot',"w") 
+    time_out.write(time) 
+    time_out.close() 
+
+    submission = pd.DataFrame({
+        "id": id_test,
+        "target": preds
+    })
+
+    submission.to_csv(name_dataset+'_'+'tpot'+'_submission.csv', index=False)
 
 
 def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     start_time = timer(None)
     ak.fit(X_train, y_train)
     ak.refit(X_train, y_train)
+    time = timer(start_time)
     preds =  ak.predict(X_test)
 
-    submission_time = pd.DataFrame({
-        "name": name,
-        "name_dataset": name_dataset,
-        "time":timer(start_time)
-    })
+    
+    time_out = open(name_dataset+'_'+'autosk',"w") 
+    time_out.write(time) 
+    time_out.close() 
 
     submission = pd.DataFrame({
         "id": id_test,
         "target": preds
     })
 
-    submission_time.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
-
-    submission.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
+    submission.to_csv(name_dataset+'_'+'autosk'+'_submission.csv', index=False)
+    
 
 def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     start_time = timer(None)
     hp.fit(X_train.as_matrix(),y_train.as_matrix())
     time = timer(start_time)
-    print(time)
     preds =  hp.predict(X_test.as_matrix())
     
     time_out = open(name_dataset+'_'+'hyperopt',"w") 
@@ -82,13 +107,14 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
         "target": preds
     })
 
-    submission.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
+    submission.to_csv(name_dataset+'_'+'hyperopt'+'_submission.csv', index=False)
     
 
 all_models = [
     ("hyperopt", hyperopt_fit_pred),
     ("autosk", autosk_fit_pred),
-    ("tpot", tpot_fit_pred)
+    ("tpot", tpot_fit_pred),
+    ('h2o',h20_fit_pred)
 ]
 
 for name_dataset, dataset in all_datasets:
