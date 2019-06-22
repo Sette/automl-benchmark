@@ -54,6 +54,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
 
 def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):    
+    tp = TPOTClassifier(verbosity=2)
     start_time = timer(None)
     tp.fit(X_train, y_train)
     tp.export('tpot_pipeline_dont_overfit.py')
@@ -73,11 +74,12 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
 
 def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
+    ak = autosklearn.classification.AutoSklearnClassifier()
     start_time = timer(None)
-    ak.fit(X_train, y_train)
-    ak.refit(X_train, y_train)
+    ak.fit(X_train.copy(), y_train.copy())
+    ak.refit(X_train.copy(), y_train.copy())
     time = timer(start_time)
-    preds =  ak.predict(X_test)
+    preds =  ak.predict(X_test.copy())
 
     
     time_out = open(name_dataset+'_'+'autosk',"w") 
@@ -93,6 +95,7 @@ def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     
 
 def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
+    hp = HyperoptEstimator()
     start_time = timer(None)
     hp.fit(X_train.as_matrix(),y_train.as_matrix())
     time = timer(start_time)
@@ -119,9 +122,6 @@ all_models = [
 
 for name_dataset, dataset in all_datasets:
 
-    tp = TPOTClassifier(verbosity=2)
-    ak = autosklearn.classification.AutoSklearnClassifier()
-    hp = HyperoptEstimator()
     submissions = []
     submission_time = []
 
