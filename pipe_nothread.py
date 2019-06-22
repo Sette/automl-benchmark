@@ -66,26 +66,22 @@ def autosk_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
 
     submission.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
 
-def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
+def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     start_time = timer(None)
     hp.fit(X_train.as_matrix(),y_train.as_matrix())
     time = timer(start_time)
     print(time)
     preds =  hp.predict(X_test.as_matrix())
     
-    time_df = pd.DataFrame({
-        "name_automl": name,
-        "name_dataset": name_dataset,
-        "time":time
-
-    })
+    time_out = open(name_dataset+'_'+'hyperopt',"w") 
+    file1.write(time) 
+    file1.close() 
 
     submission = pd.DataFrame({
         "id": id_test,
         "target": preds
     })
-    
-    time_df.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
+
     submission.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
     
 
