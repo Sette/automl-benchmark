@@ -129,6 +129,6 @@ for name_dataset, dataset in all_datasets:
 
     for name, model in all_models:
         print("Training with ", name)
-        x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test,name,name_dataset))
+        x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test,name_dataset))
         threads.append(x)
         x.start()
