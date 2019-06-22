@@ -19,7 +19,7 @@ all_datasets = [
 submissions = []
 threads = list()
 
-def tpot_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):    
+def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):    
     start_time = timer(None)
     tp.fit(X_train, y_train)
     tp.export('tpot_pipeline_dont_overfit.py')
@@ -45,7 +45,7 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
     submissions.append(("tpot",submission))
 
 
-def autosk_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
+def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     start_time = timer(None)
     ak.fit(X_train, y_train)
     ak.refit(X_train, y_train)
@@ -103,6 +103,6 @@ for name_dataset, dataset in all_datasets:
 
 
     for name, model in all_models:
-        print("Training with ", name)
-        model(X_train,y_train,X_test,id_test,name,name_dataset)
+        print("Training with ", name, ' in dataset: ', name_dataset)
+        model(X_train,y_train,X_test,id_test,name_dataset)
         
