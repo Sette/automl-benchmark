@@ -70,11 +70,12 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
     start_time = timer(None)
     hp.fit(X_train.as_matrix(),y_train.as_matrix())
     time = timer(start_time)
+    print(time)
     preds =  hp.predict(X_test.as_matrix())
     submission_time = pd.DataFrame({
         "name": name,
-        "name_dataset": name_dataset,
-        "time":str(time)
+        "name_dataset": name_dataset
+        
     })
 
     submission = pd.DataFrame({
