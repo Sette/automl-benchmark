@@ -80,7 +80,6 @@ def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     ak.refit(X_train.copy(), y_train.copy())
     time = timer(start_time)
     preds =  ak.predict(X_test.copy())
-
     
     time_out = open(name_dataset+'_'+'autosk',"w") 
     time_out.write(time) 
@@ -118,6 +117,10 @@ all_models = [
     ("tpot", tpot_fit_pred),
     ('h2o',h20_fit_pred),
     ("hyperopt", hyperopt_fit_pred),
+]
+
+all_models = [
+    ("autosk", autosk_fit_pred)
 ]
 
 for name_dataset, dataset in all_datasets:
