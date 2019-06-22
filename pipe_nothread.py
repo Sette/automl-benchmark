@@ -78,7 +78,7 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name,name_dataset):
         "target": preds
     })
 
-    submission.sub.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
+    submission.to_csv(name_dataset+'_'+name+'_submission.csv', index=False)
     
 
 all_models = [
