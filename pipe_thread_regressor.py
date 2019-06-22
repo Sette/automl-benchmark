@@ -6,6 +6,7 @@ from load_utils import *
 from benchmark_utils import timer
 import autosklearn.classification
 from hpsklearn import HyperoptEstimator
+import hpsklearn
 import pandas as pd
 
 h2o.init()
@@ -105,14 +106,14 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
     submission.to_csv(name_dataset+'_'+'hyperopt'+'_submission.csv', index=False)
     
-
+'''
 all_models = [
     ("autosk", autosk_fit_pred),
     ("tpot", tpot_fit_pred),
     ('h2o',h20_fit_pred),
     ("hyperopt", hyperopt_fit_pred),
 ]
-
+'''
 all_models = [
     ("hyperopt", hyperopt_fit_pred),
 ]
