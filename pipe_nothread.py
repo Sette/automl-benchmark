@@ -74,8 +74,8 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     preds =  hp.predict(X_test.as_matrix())
     
     time_out = open(name_dataset+'_'+'hyperopt',"w") 
-    file1.write(time) 
-    file1.close() 
+    time_out.write(time) 
+    time_out.close() 
 
     submission = pd.DataFrame({
         "id": id_test,
