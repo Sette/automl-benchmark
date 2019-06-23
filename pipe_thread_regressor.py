@@ -13,6 +13,8 @@ h2o.init()
 
 all_datasets = [
         ("taxi_fare", load_taxi_fare),
+        ("google_customer", load_google_customer),
+        ("santander_value", load_santander_value),
     ]
 
 submissions = []
@@ -34,7 +36,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time = timer(start_time)
     preds = aml.predict(test).values
 
-    time_out = open(name_dataset+'_'+'tpot',"w") 
+    time_out = open(name_dataset+'_'+'h2o',"w") 
     time_out.write(time) 
     time_out.close() 
 
@@ -43,7 +45,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
         "target": preds
     })
 
-    submission.to_csv(name_dataset+'_'+'tpot'+'_submission.csv', index=False)
+    submission.to_csv(name_dataset+'_'+'h2o'+'_submission.csv', index=False)
 
 
 
@@ -106,17 +108,14 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
     submission.to_csv(name_dataset+'_'+'hyperopt'+'_submission.csv', index=False)
     
-'''
+
 all_models = [
     ("autosk", autosk_fit_pred),
     ("tpot", tpot_fit_pred),
     ('h2o',h20_fit_pred),
     ("hyperopt", hyperopt_fit_pred),
 ]
-'''
-all_models = [
-    ("hyperopt", hyperopt_fit_pred),
-]
+
 
 for name_dataset, dataset in all_datasets:
 
@@ -127,6 +126,8 @@ for name_dataset, dataset in all_datasets:
 
 
     for name, model in all_models:
-        print("Training with ", name, ' in dataset: ', name_dataset)
-        model(X_train,y_train,X_test,id_test,name_dataset)
+        try:
+            model(X_train,y_train,X_test,id_test,name_dataset)
+        except:
+            print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
         
