@@ -74,11 +74,39 @@ def load_taxi_fare():
     data_train = pd.read_csv(overfit_filepath_train)
     data_test = pd.read_csv(overfit_filepath_test)
     
+    y_train = pd.to_numeric(data_train['fare_amount'])
+
+    data_train.drop(columns=['fare_amount','key'],inplace=True)
+    id_test = data_test.key
+    data_test.drop(columns=['key'],inplace=True)
+    
+    return data_train,y_train,data_test,id_test
+
+def load_google_customer():
+    overfit_filepath_train = "datasets/google-customer/train.csv"
+    overfit_filepath_test = "datasets/google-customer/test.csv"
+    data_train = pd.read_csv(overfit_filepath_train)
+    data_test = pd.read_csv(overfit_filepath_test)
+    
+    y_train = pd.to_numeric(data_train['PredictedLogRevenue'])
+
+    data_train.drop(columns=['PredictedLogRevenue','fullVisitorId'],inplace=True)
+    id_test = data_test.fullVisitorId
+    data_test.drop(columns=['fullVisitorId'],inplace=True)
+    
+    return data_train,y_train,data_test,id_test
+
+def load_santander_value():
+    overfit_filepath_train = "datasets/santander-value/train.csv"
+    overfit_filepath_test = "datasets/santander-value/test.csv"
+    data_train = pd.read_csv(overfit_filepath_train)
+    data_test = pd.read_csv(overfit_filepath_test)
+    
     y_train = pd.to_numeric(data_train['target'])
 
-    data_train.drop(columns=['target','id'],inplace=True)
-    id_test = data_test.id
-    data_test.drop(columns=['id'],inplace=True)
+    data_train.drop(columns=['target','ID'],inplace=True)
+    id_test = data_test.ID
+    data_test.drop(columns=['ID'],inplace=True)
     
     return data_train,y_train,data_test,id_test
 
