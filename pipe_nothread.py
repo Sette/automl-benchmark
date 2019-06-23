@@ -17,9 +17,6 @@ all_datasets = [
         ("microsoft_malware", load_microsoft_malware)
     ]
 
-all_datasets = [
-        ("dont_overfit", load_dont_overfit)
-    ]
 
 submissions = []
 threads = list()
@@ -41,7 +38,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     preds = aml.predict(test).values
     preds_final = [1 if x> 0.5 else 0 for x in preds]
 
-    time_out = open(name_dataset+'_'+'tpot',"w") 
+    time_out = open(name_dataset+'_'+'h2o',"w") 
     time_out.write(time) 
     time_out.close() 
 
@@ -50,7 +47,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
         "target": preds_final
     })
 
-    submission.to_csv(name_dataset+'_'+'tpot'+'_submission.csv', index=False)
+    submission.to_csv(name_dataset+'_'+'h2o'+'_submission.csv', index=False)
 
 
 
@@ -118,10 +115,6 @@ all_models = [
     ("tpot", tpot_fit_pred),
     ('h2o',h20_fit_pred),
     ("hyperopt", hyperopt_fit_pred),
-]
-
-all_models = [
-    ("autosk", autosk_fit_pred)
 ]
 
 for name_dataset, dataset in all_datasets:
