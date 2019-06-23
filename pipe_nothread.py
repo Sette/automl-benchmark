@@ -127,5 +127,8 @@ for name_dataset, dataset in all_datasets:
 
     for name, model in all_models:
         print("Training with ", name, ' in dataset: ', name_dataset)
-        model(X_train,y_train,X_test,id_test,name_dataset)
+        try:
+            model(X_train,y_train,X_test,id_test,name_dataset)
+        except:
+            print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
         
