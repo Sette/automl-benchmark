@@ -39,6 +39,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     aml.train(x=x, y=y, training_frame=train)
     time = timer(start_time)
     preds = aml.predict(test).values
+    preds_final = [1 if x> 0.5 else 0 for x in preds]
 
     time_out = open(name_dataset+'_'+'tpot',"w") 
     time_out.write(time) 
@@ -46,7 +47,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
     submission = pd.DataFrame({
         "id": id_test,
-        "target": preds
+        "target": preds_final
     })
 
     submission.to_csv(name_dataset+'_'+'tpot'+'_submission.csv', index=False)
