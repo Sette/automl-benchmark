@@ -76,9 +76,9 @@ def load_taxi_fare():
     
     y_train = pd.to_numeric(data_train['fare_amount'])
 
-    data_train.drop(columns=['fare_amount','key'],inplace=True)
+    data_train.drop(columns=['fare_amount','key','pickup_datetime'],inplace=True)
     id_test = data_test.key
-    data_test.drop(columns=['key'],inplace=True)
+    data_test.drop(columns=['key','pickup_datetime'],inplace=True)
     
     return data_train,y_train,data_test,id_test
 
