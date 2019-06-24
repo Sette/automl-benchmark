@@ -1,7 +1,7 @@
 import threading
 import h2o
 from h2o.automl import H2OAutoML
-from tpot import TPOTClassifier
+from tpot import TPOTRegressor
 import autosklearn.regression
 from load_utils import *
 from benchmark_utils import timer
