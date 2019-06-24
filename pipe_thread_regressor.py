@@ -131,7 +131,7 @@ for name_dataset, dataset in all_datasets:
         except Exception as e:
             error_out = open('error_'+name_dataset+'_'+name,"w")
             print(e) 
-            error_out.writeline(e) 
+            error_out.write(e) 
             error_out.close() 
             print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
         
