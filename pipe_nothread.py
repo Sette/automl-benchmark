@@ -11,7 +11,6 @@ import pandas as pd
 h2o.init()
 
 all_datasets = [
-        ("dont_overfit", load_dont_overfit),
         ("porto_seguro", load_porto_seguro),
         ("santander_customer", load_santander_customer),
         ("microsoft_malware", load_microsoft_malware)
@@ -131,7 +130,8 @@ for name_dataset, dataset in all_datasets:
             model(X_train,y_train,X_test,id_test,name_dataset)
         except Exception as e:
             error_out = open('error_'+name_dataset+'_'+name,"w") 
-            error_out.writeline(e) 
+            print(e) 
+            error_out.write(str(e))
             error_out.close() 
             print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
         
