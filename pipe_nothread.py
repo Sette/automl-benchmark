@@ -35,8 +35,8 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     aml = H2OAutoML()
     aml.train(x=x, y=y, training_frame=train)
     time = timer(start_time)
-    preds = aml.predict(test).values
-    preds_final = [1 if x> 0.5 else 0 for x in preds]
+    preds = aml.predict(test).as_data_frame()
+    preds_final = [1 if x> 0.5 else 0 for x in preds.values]
 
     time_out = open(name_dataset+'_'+'h2o',"w") 
     time_out.write(time) 
