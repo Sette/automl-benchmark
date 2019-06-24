@@ -129,7 +129,8 @@ for name_dataset, dataset in all_datasets:
         try:
             model(X_train,y_train,X_test,id_test,name_dataset)
         except Exception as e:
-            error_out = open('error_'+name_dataset+'_'+name,"w") 
+            error_out = open('error_'+name_dataset+'_'+name,"w")
+            print(e) 
             error_out.writeline(e) 
             error_out.close() 
             print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
