@@ -13,9 +13,9 @@ import pandas as pd
 h2o.init()
 
 all_datasets = [
+        ("santander_value", load_santander_value),
         ("taxi_fare", load_taxi_fare),
         ("google_customer", load_google_customer),
-        ("santander_value", load_santander_value),
     ]
 
 submissions = []
