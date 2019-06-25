@@ -11,14 +11,9 @@ import pandas as pd
 h2o.init()
 
 all_datasets = [
-        ("dont_overfit", load_dont_overfit),
         ("porto_seguro", load_porto_seguro),
         ("santander_customer", load_santander_customer),
         ("microsoft_malware", load_microsoft_malware)
-    ]
-
-all_datasets = [
-        ("dont_overfit", load_dont_overfit)
     ]
 
 submissions = []
@@ -38,10 +33,10 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     aml = H2OAutoML()
     aml.train(x=x, y=y, training_frame=train)
     time = timer(start_time)
-    preds = aml.predict(test).values
-    preds_final = [1 if x> 0.5 else 0 for x in preds]
+    preds = aml.predict(test).as_data_frame()
+    preds_final = [1 if x> 0.5 else 0 for x in preds.values]
 
-    time_out = open(name_dataset+'_'+'tpot',"w") 
+    time_out = open(name_dataset+'_'+'h2o',"w") 
     time_out.write(time) 
     time_out.close() 
 
@@ -50,11 +45,11 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
         "target": preds_final
     })
 
-    submission.to_csv(name_dataset+'_'+'tpot'+'_submission.csv', index=False)
-
+    submission.to_csv(name_dataset+'_'+'h2o'+'_submission.csv', index=False)
 
 
 def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):    
+    tp = TPOTClassifier(verbosity=3)
     start_time = timer(None)
     tp.fit(X_train, y_train)
     tp.export('tpot_pipeline_dont_overfit.py')
@@ -74,13 +69,13 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
 
 def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
+    ak = autosklearn.classification.AutoSklearnClassifier()
     start_time = timer(None)
-    ak.fit(X_train, y_train)
-    ak.refit(X_train, y_train)
+    ak.fit(X_train.copy(), y_train.copy())
+    ak.refit(X_train.copy(), y_train.copy())
     time = timer(start_time)
-    preds =  ak.predict(X_test)
+    preds =  ak.predict(X_test.copy())
 
-    
     time_out = open(name_dataset+'_'+'autosk',"w") 
     time_out.write(time) 
     time_out.close() 
@@ -94,6 +89,7 @@ def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     
 
 def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
+    hp = HyperoptEstimator()
     start_time = timer(None)
     hp.fit(X_train.as_matrix(),y_train.as_matrix())
     time = timer(start_time)
@@ -112,24 +108,31 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     
 
 all_models = [
-    ("hyperopt", hyperopt_fit_pred),
-    ("autosk", autosk_fit_pred),
     ("tpot", tpot_fit_pred),
-    ('h2o',h20_fit_pred)
+    ('h2o',h20_fit_pred),
+    ("autosk", autosk_fit_pred),
+    ("hyperopt", hyperopt_fit_pred),
 ]
 
 for name_dataset, dataset in all_datasets:
 
-    tp = TPOTClassifier(verbosity=2)
-    ak = autosklearn.classification.AutoSklearnClassifier()
-    hp = HyperoptEstimator()
     submissions = []
     submission_time = []
 
     X_train, y_train, X_test, id_test = dataset()
 
     for name, model in all_models:
-        print("Training with ", name)
-        x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test,name_dataset))
-        threads.append(x)
-        x.start()
+        print("Training with ", name, ' in dataset: ', name_dataset)
+        try:
+            x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test,name_dataset))
+            threads.append(x)
+            x.start()
+        except Exception as e:
+            error_out = open('error_'+name_dataset+'_'+name,"w") 
+            print(e) 
+            error_out.write(str(e))
+            error_out.close() 
+            print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
+        
+
+    
