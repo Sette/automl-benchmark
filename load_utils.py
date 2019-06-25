@@ -79,8 +79,11 @@ def load_taxi_fare():
     data_train.drop(columns=['fare_amount','key','pickup_datetime'],inplace=True)
     id_test = data_test.key
     data_test.drop(columns=['key','pickup_datetime'],inplace=True)
+
+    id_name = 'key'
+    target_name = 'fare_amount'
     
-    return data_train,y_train,data_test,id_test
+    return data_train,y_train,data_test,id_test,id_name,target_name
 
 def load_google_customer():
     overfit_filepath_train = "datasets/google-customer/train.csv"
@@ -93,8 +96,11 @@ def load_google_customer():
     data_train.drop(columns=['PredictedLogRevenue','fullVisitorId'],inplace=True)
     id_test = data_test.fullVisitorId
     data_test.drop(columns=['fullVisitorId'],inplace=True)
+
+    id_name = 'fullVisitorId'
+    target_name = 'PredictedLogRevenue'
     
-    return data_train,y_train,data_test,id_test
+    return data_train,y_train,data_test,id_test,id_name,target_name
 
 def load_santander_value():
     overfit_filepath_train = "datasets/santander-value/train.csv"
@@ -107,8 +113,11 @@ def load_santander_value():
     data_train.drop(columns=['target','ID'],inplace=True)
     id_test = data_test.ID
     data_test.drop(columns=['ID'],inplace=True)
+
+    id_name = 'ID'
+    target_name = 'target'
     
-    return data_train,y_train,data_test,id_test
+    return data_train,y_train,data_test,id_test,id_name,target_name
 
 
 def load_fifa():
