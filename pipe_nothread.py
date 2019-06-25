@@ -51,7 +51,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
 
 def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):    
-    tp = TPOTClassifier(verbosity=2)
+    tp = TPOTClassifier(verbosity=3)
     start_time = timer(None)
     tp.fit(X_train, y_train)
     tp.export('tpot_pipeline_dont_overfit.py')
