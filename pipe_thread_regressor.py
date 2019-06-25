@@ -21,7 +21,7 @@ all_datasets = [
 submissions = []
 threads = list()
 
-def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
+def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name ):
     X_train['target'] = y_train
     start_time = timer(None)
     train = h2o.H2OFrame.from_python(X_train)
@@ -29,7 +29,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     
     # Identify predictors and response
     x = train.columns
-    y = "target"
+    y = target_name
 
     # (limited to 1 hour max runtime by default)
     aml = H2OAutoML()
@@ -42,15 +42,14 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time_out.close() 
 
     submission = pd.DataFrame({
-        "id": id_test,
-        "target": preds
+        id_name: id_test,
+        target_name: preds
     })
 
     submission.to_csv(name_dataset+'_'+'h2o'+'_submission.csv', index=False)
 
 
-
-def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):    
+def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name ):    
     tp = TPOTRegressor(verbosity=2)
     start_time = timer(None)
     tp.fit(X_train, y_train)
@@ -63,14 +62,14 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time_out.close() 
 
     submission = pd.DataFrame({
-        "id": id_test,
-        "target": preds
+        id_name: id_test,
+        target_name: preds
     })
 
     submission.to_csv(name_dataset+'_'+'tpot'+'_submission.csv', index=False)
 
 
-def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
+def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name ):
     ak =  autosklearn.regression.AutoSklearnRegressor()
     start_time = timer(None)
     ak.fit(X_train.copy(), y_train.copy())
@@ -84,14 +83,14 @@ def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time_out.close() 
 
     submission = pd.DataFrame({
-        "id": id_test,
-        "target": preds
+        id_name: id_test,
+        target_name: preds
     })
 
     submission.to_csv(name_dataset+'_'+'autosk'+'_submission.csv', index=False)
     
 
-def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
+def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name ):
     hp = HyperoptEstimator(regressor=hpsklearn.components.any_regressor('reg'))
     start_time = timer(None)
     hp.fit(X_train.as_matrix(),y_train.as_matrix())
@@ -103,8 +102,8 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time_out.close() 
 
     submission = pd.DataFrame({
-        "id": id_test,
-        "target": preds
+        id_name: id_test,
+        target_name: preds
     })
 
     submission.to_csv(name_dataset+'_'+'hyperopt'+'_submission.csv', index=False)
@@ -124,12 +123,12 @@ for name_dataset, dataset in all_datasets:
     submissions = []
     submission_time = []
 
-    X_train, y_train, X_test, id_test = dataset()
+    X_train, y_train, X_test, id_test, id_name,target_name = dataset()
 
 
     for name, model in all_models:
         try:
-            model(X_train,y_train,X_test,id_test,name_dataset)
+            model(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name )
         except Exception as e:
             error_out = open('error_'+name_dataset+'_'+name,"w")
             print(e) 
