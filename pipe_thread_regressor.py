@@ -22,7 +22,7 @@ submissions = []
 threads = list()
 
 def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name ):
-    X_train['target'] = y_train
+    X_train[target_name] = y_train
     start_time = timer(None)
     train = h2o.H2OFrame.from_python(X_train)
     test = h2o.H2OFrame.from_python(X_test)
@@ -35,7 +35,9 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name
     aml = H2OAutoML()
     aml.train(x=x, y=y, training_frame=train)
     time = timer(start_time)
-    preds = aml.predict(test).as_data_frame().values()
+    preds = aml.predict(test).as_data_frame().values
+
+    X_train.drop(columns=[target_name],inplace=True)
 
     time_out = open(name_dataset+'_'+'h2o',"w") 
     time_out.write(time) 
@@ -113,8 +115,6 @@ all_models = [
     ('h2o',h20_fit_pred),
     ("hyperopt", hyperopt_fit_pred),
     ("autosk", autosk_fit_pred),
-    ("tpot", tpot_fit_pred),
-    
 ]
 
 
