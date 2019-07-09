@@ -35,6 +35,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     aml.train(x=x, y=y, training_frame=train)
     time = timer(start_time)
     preds = aml.predict(test).as_data_frame()
+    #Signal fuction
     preds_final = [1 if x> 0.5 else 0 for x in preds.values]
 
     X_train.drop(columns=["target"],inplace=True)
