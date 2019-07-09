@@ -69,7 +69,7 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
 
 def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
-    ak = autosklearn.classification.AutoSklearnClassifier()
+    ak = autosklearn.classification.AutoSklearnClassifier(ml_memory_limit=51000)
     start_time = timer(None)
     ak.fit(X_train.copy(), y_train.copy())
     ak.refit(X_train.copy(), y_train.copy())
