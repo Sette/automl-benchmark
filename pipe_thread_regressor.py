@@ -22,7 +22,8 @@ submissions = []
 threads = list()
 
 def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name ):
-    X_train[target_name] = y_train
+    X_train_cp = X_train.copy()
+    X_train_cp[target_name] = y_train
     start_time = timer(None)
     train = h2o.H2OFrame.from_python(X_train)
     test = h2o.H2OFrame.from_python(X_test)
