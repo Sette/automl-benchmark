@@ -129,11 +129,19 @@ for name_dataset, dataset in all_datasets:
 
     for name, model in all_models:
         try:
-            model(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name )
+            x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name))
+            threads.append(x)
+            x.start()
         except Exception as e:
             error_out = open('error_'+name_dataset+'_'+name,"w")
             print(e) 
             error_out.write(str(e))
             error_out.close() 
             print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
-        
+    
+    for thread in threads:
+        print("Aguardando threads")
+        thread.join()
+
+    
+    print("Fim das threads")
