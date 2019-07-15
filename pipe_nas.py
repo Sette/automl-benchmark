@@ -28,8 +28,10 @@ def run():
     
     clf = ImageClassifier(verbose=True, augment=False)
     clf.fit(x_train, y_train, time_limit=12 * 60 * 60)
+    clf.export_autokeras_model('best_auto_keras_model.h5')
     predictions = clf.predict(x_test)
     print(predictions)
+
     #clf.final_fit(x_train, y_train, x_test, y_test, retrain=True)
     #y = clf.evaluate(x_test, y_test)
     #print(y * 100)
