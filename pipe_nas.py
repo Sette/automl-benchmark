@@ -15,7 +15,7 @@ def load_images():
 
     
     x_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission_real.csv",
-                                        images_path=data_dir+"/train")
+                                        images_path=data_dir+"/test")
     print(x_test.shape)
     
     return x_train, y_train,x_test
