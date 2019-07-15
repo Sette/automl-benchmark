@@ -18,7 +18,7 @@ def load_images():
                                         images_path=data_dir+"/test")
     print(x_test.shape)
     
-    return x_train, y_train,x_test
+    return x_train, y_train,x_test[0]
     
 
 
