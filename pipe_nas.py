@@ -1,19 +1,19 @@
 # To run first unzip ../load_raw_image_data.zip into ../
 # so the train and test directories reside in this directory 
 
-from autokeras import load_image_dataset
+from autokeras.image.image_supervised import load_image_dataset
 from autokeras import ImageClassifier
 
-data_dir = datasets/dog-breed/
+data_dir = "datasets/dog-breed"
 
 def load_images():
-    x_train, y_train = load_image_dataset(csv_file_path=data_dir+"/labels.csv",
-                                          images_path=dataset+"/train")
+    x_train, y_train = load_image_dataset(csv_file_path=data_dir+"/labels_real.csv",
+                                          images_path=data_dir+"/train")
     print(x_train.shape)
     print(y_train.shape)
 
-    x_test, y_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission.csv",
-                                        images_path=dataset+"/train")
+    x_test, y_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission_real.csv",
+                                        images_path=data_dir+"/train")
     print(x_test.shape)
     print(y_test.shape)
     return x_train, y_train, x_test, y_test
