@@ -13,21 +13,23 @@ def load_images():
     print(x_train.shape)
     print(y_train.shape)
 
-    '''
+    
     x_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission_real.csv",
                                         images_path=data_dir+"/train")
     print(x_test.shape)
-    '''
-    return x_train, y_train
+    
+    return x_train, y_train,x_test
     
 
 
 def run():
-    x_train, y_train = load_images()
+    x_train, y_train,x_test = load_images()
     # After loading train and evaluate classifier.
     
     clf = ImageClassifier(verbose=True, augment=False)
     clf.fit(x_train, y_train, time_limit=12 * 60 * 60)
+    predictions = clf.predict(x_test)
+    print(predictions)
     #clf.final_fit(x_train, y_train, x_test, y_test, retrain=True)
     #y = clf.evaluate(x_test, y_test)
     #print(y * 100)
