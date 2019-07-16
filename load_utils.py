@@ -30,11 +30,11 @@ def load_microsoft_malware():
     data_train = pd.read_csv(microsoft_filepath_train)
     data_test = pd.read_csv(microsoft_filepath_test)
     
-    y_train = pd.to_numeric(data_train['target'])
+    y_train = pd.to_numeric(data_train['HasDetections'])
 
-    data_train.drop(columns=['target','id'],inplace=True)
+    data_train.drop(columns=['HasDetections','MachineIdentifier'],inplace=True)
     id_test = data_test.id
-    data_test.drop(columns=['id'],inplace=True)
+    data_test.drop(columns=['MachineIdentifier'],inplace=True)
     
     
     return data_train,y_train,data_test,id_test
