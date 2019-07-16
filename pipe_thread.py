@@ -11,8 +11,8 @@ import pandas as pd
 h2o.init()
 
 all_datasets = [
-        #("porto_seguro", load_porto_seguro),
         ("microsoft_malware", load_microsoft_malware),
+        ("porto_seguro", load_porto_seguro),
         ("santander_customer", load_santander_customer)
     ]
 
@@ -37,7 +37,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     preds = aml.predict(test).as_data_frame()
     preds_final = [1 if x> 0.5 else 0 for x in preds.values]
 
-    time_out = open(name_dataset+'_'+'h2o',"w") 
+    time_out = open(name_dataset+'_'+'h2o',"w")     
     time_out.write(time) 
     time_out.close() 
 
