@@ -33,7 +33,7 @@ def load_microsoft_malware():
     y_train = pd.to_numeric(data_train['HasDetections'])
 
     data_train.drop(columns=['HasDetections','MachineIdentifier'],inplace=True)
-    id_test = data_test.id
+    id_test = data_test.MachineIdentifier
     data_test.drop(columns=['MachineIdentifier'],inplace=True)
     
     
