@@ -92,7 +92,7 @@ def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     hp = HyperoptEstimator()
     start_time = timer(None)
-    hp.fit(X_train.values,y_train.values
+    hp.fit(X_train.values,y_train.values)
     time = timer(start_time)
     preds =  hp.predict(X_test.values
     
