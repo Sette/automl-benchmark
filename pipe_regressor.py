@@ -15,7 +15,6 @@ h2o.init()
 all_datasets = [
         ("santander_value", load_santander_value),
         ("taxi_fare", load_taxi_fare),
-        
         ("google_customer", load_google_customer),
     ]
 
@@ -130,9 +129,7 @@ for name_dataset, dataset in all_datasets:
 
     for name, model in all_models:
         try:
-            x = threading.Thread(target=model, args=(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name))
-            threads.append(x)
-            x.start()
+            model(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name)
         except Exception as e:
             error_out = open('error_'+name_dataset+'_'+name,"w")
             print(e) 
@@ -140,9 +137,7 @@ for name_dataset, dataset in all_datasets:
             error_out.close() 
             print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
     
-    for thread in threads:
-        print("Aguardando threads")
-        thread.join()
+    
 
     
     print("Fim das threads")
