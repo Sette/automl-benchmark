@@ -91,7 +91,7 @@ def load_google_customer():
     data_train = pd.read_csv(overfit_filepath_train)
     data_test = pd.read_csv(overfit_filepath_test)
     
-    y_train = pd.to_numeric(data_train['PredictedLogRevenue'])
+    y_train = data_train.PredictedLogRevenue
 
     data_train.drop(columns=['PredictedLogRevenue','fullVisitorId'],inplace=True)
     id_test = data_test.fullVisitorId
