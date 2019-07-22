@@ -85,20 +85,20 @@ def load_taxi_fare():
     
     return data_train,y_train,data_test,id_test,id_name,target_name
 
-def load_google_customer():
-    overfit_filepath_train = "datasets/google-customer/train.csv"
-    overfit_filepath_test = "datasets/google-customer/test.csv"
+def load_trip_duration():
+    overfit_filepath_train = "datasets/trip-duration/train.csv"
+    overfit_filepath_test = "datasets/trip-duration/test.csv"
     data_train = pd.read_csv(overfit_filepath_train)
     data_test = pd.read_csv(overfit_filepath_test)
     print(data_train.columns)
-    y_train = data_train['PredictedLogRevenue']
+    y_train = data_train['trip_duration']
 
-    data_train.drop(columns=['PredictedLogRevenue','fullVisitorId'],inplace=True)
-    id_test = data_test.fullVisitorId
-    data_test.drop(columns=['fullVisitorId'],inplace=True)
+    data_train.drop(columns=['id','trip_duration'],inplace=True)
+    id_test = data_test.id
+    data_test.drop(columns=['id'],inplace=True)
 
-    id_name = 'fullVisitorId'
-    target_name = 'PredictedLogRevenue'
+    id_name = 'id'
+    target_name = 'trip_duration'
     
     return data_train,y_train,data_test,id_test,id_name,target_name
 
