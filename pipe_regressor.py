@@ -13,7 +13,7 @@ import pandas as pd
 h2o.init()
 
 all_datasets = [
-        ("google_customer", load_google_customer),
+        ("trip_duration", load_trip_duration),
         ("santander_value", load_santander_value),
         ("taxi_fare", load_taxi_fare),
     ]
