@@ -12,19 +12,21 @@ from sklearn import preprocessing
 
 
 def load_house_prices():
-    santander_filepath_train = "datasets/house-prices/train.csv"
-    santander_filepath_test = "datasets/house-prices/test.csv"
-
-    data_train = pd.read_csv(santander_filepath_train)
-    data_test = pd.read_csv(santander_filepath_test)
+    overfit_filepath_train = "datasets/house-prices/train.csv"
+    overfit_filepath_test = "datasets/house-prices/test.csv"
+    data_train = pd.read_csv(overfit_filepath_train)
+    data_test = pd.read_csv(overfit_filepath_test)
     
     y_train = pd.to_numeric(data_train['SalePrice'])
 
     data_train.drop(columns=['SalePrice','Id'],inplace=True)
-    id_test = data_test.Id
+    id_test = data_test.key
     data_test.drop(columns=['Id'],inplace=True)
+
+    id_name = 'Id'
+    target_name = 'SalePrice'
     
-    return data_train,y_train,data_test,id_test
+    return data_train,y_train,data_test,id_test,id_name,target_name
 
 
 
