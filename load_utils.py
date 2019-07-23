@@ -21,7 +21,7 @@ def load_house_prices():
     y_train = pd.to_numeric(data_train['SalePrice'])
 
     data_train.drop(columns=['SalePrice','Id'],inplace=True)
-    id_test = data_test.ID_code
+    id_test = data_test.Id
     data_test.drop(columns=['Id'],inplace=True)
     
     return data_train,y_train,data_test,id_test
