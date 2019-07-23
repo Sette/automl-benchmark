@@ -8,6 +8,26 @@ Este é um arquivo de script temporário.
 import pandas as pd
 from sklearn import preprocessing
 
+
+
+
+def load_house_prices():
+    santander_filepath_train = "datasets/house-prices/train.csv"
+    santander_filepath_test = "datasets/house-prices/test.csv"
+
+    data_train = pd.read_csv(santander_filepath_train)
+    data_test = pd.read_csv(santander_filepath_test)
+    
+    y_train = pd.to_numeric(data_train['SalePrice'])
+
+    data_train.drop(columns=['SalePrice','Id'],inplace=True)
+    id_test = data_test.ID_code
+    data_test.drop(columns=['Id'],inplace=True)
+    
+    return data_train,y_train,data_test,id_test
+
+
+
 def load_santander_customer():
     santander_filepath_train = "datasets/santander-customer/train.csv"
     santander_filepath_test = "datasets/santander-customer/test.csv"

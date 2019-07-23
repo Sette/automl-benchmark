@@ -13,7 +13,7 @@ import pandas as pd
 h2o.init()
 
 all_datasets = [
-        ("trip_duration", load_trip_duration),
+        ("house_prices", load_house_prices),
         ("santander_value", load_santander_value),
         ("taxi_fare", load_taxi_fare),
     ]
@@ -37,8 +37,6 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name
     aml.train(x=x, y=y, training_frame=train)
     time = timer(start_time)
     preds = aml.predict(test).as_data_frame().values
-
-    X_train.drop(columns=[target_name],inplace=True)
 
     time_out = open(name_dataset+'_'+'h2o',"w") 
     time_out.write(time) 
