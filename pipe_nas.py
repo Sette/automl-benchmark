@@ -4,6 +4,8 @@
 from autokeras import ImageClassifier
 from autokeras.image.image_supervised import load_image_dataset
 
+import adanet
+import tensorflow as tf
 
 data_dir = "datasets/dog-breed"
 
@@ -22,7 +24,7 @@ def load_images():
     
 
 
-def run():
+def run_autokeras():
     x_train, y_train,x_test = load_images()
     # After loading train and evaluate classifier.
     
@@ -37,6 +39,35 @@ def run():
     #print(y * 100)
     
 
+def run_audanet():
+
+    x_train, y_train,x_test = load_images()
+    # Define the model head for computing loss and evaluation metrics.
+    head = MultiClassHead(n_classes=10)
+
+    # Feature columns define how to process examples.
+    feature_columns = ...
+
+    # Learn to ensemble linear and neural network models.
+    estimator = adanet.AutoEnsembleEstimator(
+        head=head,
+        candidate_pool={
+            "linear":
+                tf.estimator.LinearEstimator(
+                    head=head,
+                    feature_columns=feature_columns,
+                    optimizer=...),
+            "dnn":
+                tf.estimator.DNNEstimator(
+                    head=head,
+                    feature_columns=feature_columns,
+                    optimizer=...,
+                    hidden_units=[1000, 500, 100])},
+        max_iteration_steps=50)
+
+    estimator.train(input_fn=x_train, steps=100)
+    metrics = estimator.evaluate(input_fn=y_train)
+    predictions = estimator.predict(input_fn=x_test)
 
 if __name__ == '__main__':
-    run()
+    run_audanet()
