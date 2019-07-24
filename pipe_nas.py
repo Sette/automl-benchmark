@@ -20,7 +20,7 @@ def load_images():
                                         images_path=data_dir+"/test")
     print(x_test[0].shape)
     
-    return x_train, y_train,x_test[0]
+    return x_train/255, y_train,x_test[0]/255
     
 
 
@@ -54,8 +54,6 @@ def cnn_model(features, labels, mode, params):
 def run_audanet():
 
     x_train, y_train,x_test = load_images()
-    x_train = x_train / 255 # map values between 0 and 1
-    x_test  = x_test / 255  # map values between 0 and 1
 
     x_train = x_train.astype(np.float32) # cast values to float32
     x_test = x_test.astype(np.float32)   # cast values to float32
