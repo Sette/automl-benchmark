@@ -3,7 +3,7 @@
 
 from autokeras import ImageClassifier
 from autokeras.image.image_supervised import load_image_dataset
-
+import numpy as np
 import adanet
 import tensorflow as tf
 
@@ -38,18 +38,31 @@ def run_autokeras():
     #y = clf.evaluate(x_test, y_test)
     #print(y * 100)
 
-from tensorflow.keras.layers import Flatten,Dense
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten,Dense
 
 def cnn_model(features, labels, mode, params):
     images = list(features.values())[0] # get values from dict
     
-    x = tf.keras.layers.Flatten()(images)
+    x = tf.keras.layers.Conv2D(32,
+                               kernel_size=7,
+                               activation='relu')(images)
+    x = tf.keras.layers.MaxPooling2D(strides=2)(x)
+    x = tf.keras.layers.Flatten()(x)
     x = tf.keras.layers.Dense(100, activation='relu')(x)
     logits = tf.keras.layers.Dense(10)(x)
 
 def run_audanet():
 
     x_train, y_train,x_test = load_images()
+    x_train = x_train / 255 # map values between 0 and 1
+    x_test  = x_test / 255  # map values between 0 and 1
+
+    x_train = x_train.astype(np.float32) # cast values to float32
+    x_test = x_test.astype(np.float32)   # cast values to float32
+
+    y_train = y_train.astype(np.int32) # cast values to int32
+    y_train = y_train.astype(np.int32)   # cast values to int32
+
     EPOCHS = 10
     BATCH_SIZE = 32
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
