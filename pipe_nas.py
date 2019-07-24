@@ -3,10 +3,95 @@
 
 from autokeras import ImageClassifier
 from autokeras.image.image_supervised import load_image_dataset
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten,Dense
 import numpy as np
 import adanet
 import tensorflow as tf
 from keras.datasets import mnist
+
+class CNNBuilder(adanet.subnetwork.Builder):
+    def __init__(self, n_convs):
+        self._n_convs = n_convs
+        
+    def build_subnetwork(self,
+                         features,
+                         logits_dimension,
+                         training,
+                         iteration_step,
+                         summary,
+                         previous_ensemble=None):
+        """See `adanet.subnetwork.Builder`."""
+        
+        images = list(features.values())[0]
+        x = images
+    
+        for i in range(self._n_convs):
+            x = Conv2D(32, kernel_size=7, activation='relu')(x)
+            x = MaxPooling2D(strides=2)(x)
+        
+        x = Flatten()(x)
+        x = Dense(100, activation='relu')(x)
+        
+        logits = Dense(10)(x)
+
+        complexity = tf.constant(1)
+
+        persisted_tensors = {'n_convs': tf.constant(self._n_convs)}
+        
+        return adanet.Subnetwork(
+            last_layer=x,
+            logits=logits,
+            complexity=complexity,
+            persisted_tensors=persisted_tensors)
+    
+    def build_subnetwork_train_op(self,
+                                  subnetwork,
+                                  loss,
+                                  var_list,
+                                  labels,
+                                  iteration_step,
+                                  summary,
+                                  previous_ensemble=None):
+        """See `adanet.subnetwork.Builder`."""
+
+        optimizer = tf.train.RMSPropOptimizer(learning_rate=0.001,
+                                              decay=0.0)
+        # NOTE: The `adanet.Estimator` increments the global step.
+        return optimizer.minimize(loss=loss, var_list=var_list)
+
+    def build_mixture_weights_train_op(self,
+                                       loss,
+                                       var_list,
+                                       logits,
+                                       labels,
+                                       iteration_step, summary):
+        """See `adanet.subnetwork.Builder`."""
+        return tf.no_op("mixture_weights_train_op")
+
+    @property
+    def name(self):
+        """See `adanet.subnetwork.Builder`."""
+        return f'cnn_{self._n_convs}'
+
+class CNNGenerator(adanet.subnetwork.Generator):    
+    def __init__(self):
+        self._cnn_builder_fn = CNNBuilder    
+    def generate_candidates(self,
+                            previous_ensemble,
+                            iteration_number,
+                            previous_ensemble_reports,
+                            all_reports):
+
+        n_convs = 0
+        if previous_ensemble:
+            n_convs = tf.contrib.util.constant_value(
+                previous_ensemble.weighted_subnetworks[-1]
+                .subnetwork
+                .persisted_tensors['n_convs'])        
+        return [
+            self._cnn_builder_fn(n_convs=n_convs),
+            self._cnn_builder_fn(n_convs=n_convs + 1)
+        ]
 
 data_dir = "datasets/dog-breed"
 
@@ -39,35 +124,14 @@ def run_autokeras():
     #y = clf.evaluate(x_test, y_test)
     #print(y * 100)
 
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten,Dense
-
-def cnn_model(features, labels, mode, params):
-    images = list(features.values())[0] # get values from dict
-    
-    x = tf.keras.layers.Conv2D(32,
-                               kernel_size=7,
-                               activation='relu')(images)
-    x = tf.keras.layers.MaxPooling2D(strides=2)(x)
-    x = tf.keras.layers.Flatten()(x)
-    x = tf.keras.layers.Dense(100, activation='relu')(x)
-    logits = tf.keras.layers.Dense(10)(x)
 
 def run_audanet():
 
-    #x_train, y_train,x_test = load_images()
-    (x_train, y_train), (x_test, y_test) = mnist.load_data()
-
-    x_train = x_train.reshape(x_train.shape[0], 28, 28, 1).astype('float32') / 255
-    x_test = x_test.reshape(x_test.shape[0], 28, 28, 1).astype('float32') / 255
-    
-    x_train = x_train.astype(np.float32) # cast values to float32
-    x_test = x_test.astype(np.float32)   # cast values to float32
-
-    y_train = y_train.astype(np.int32) # cast values to int32
-    y_train = y_train.astype(np.int32)   # cast values to int32
-
     EPOCHS = 10
     BATCH_SIZE = 32
+
+    x_train, y_train,x_test = load_images()
+
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": x_train},
         y=y_train,
@@ -88,17 +152,27 @@ def run_audanet():
         num_epochs=1,
         shuffle=False)
 
-    classifier = tf.estimator.Estimator(model_fn=cnn_model)
+    head = tf.contrib.estimator.multi_class_head(10)
+    estimator = adanet.Estimator(
+    head=head,
+    subnetwork_generator=CNNGenerator(),
+    max_iteration_steps=5,
+    evaluator=adanet.Evaluator(
+        input_fn=adanet_input_fn,
+        steps=None),
+    adanet_loss_decay=.99)
 
-    results, _ = tf.estimator.train_and_evaluate(classifier,
+    results, _ = tf.estimator.train_and_evaluate(
+    estimator,
     train_spec=tf.estimator.TrainSpec(
         input_fn=train_input_fn,
-        max_steps=EPOCHS),
+        max_steps=5),
     eval_spec=tf.estimator.EvalSpec(
         input_fn=test_input_fn,
         steps=None))
     print("Accuracy:", results["accuracy"])
-    print("Loss:", results["loss"])
+    print("Loss:", results["average_loss"])
+    print(ensemble_architecture(results))
 
 if __name__ == '__main__':
     run_audanet()
