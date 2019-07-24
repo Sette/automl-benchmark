@@ -141,6 +141,7 @@ def run_audanet():
 
     y_train = y_train.astype(np.int32) # cast values to int32
     y_test = y_test.astype(np.int32)   # cast values to int32
+
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": x_train},
         y=y_train,
@@ -157,6 +158,7 @@ def run_audanet():
 
     test_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": x_test},
+        y=y_test,
         batch_size=BATCH_SIZE,
         num_epochs=1,
         shuffle=False)
