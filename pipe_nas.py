@@ -38,16 +38,12 @@ def run_autokeras():
     #y = clf.evaluate(x_test, y_test)
     #print(y * 100)
 
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten,Dense
+from tensorflow.keras.layers import Flatten,Dense
 
 def cnn_model(features, labels, mode, params):
     images = list(features.values())[0] # get values from dict
     
-    x = tf.keras.layers.Conv2D(32,
-                               kernel_size=7,
-                               activation='relu')(images)
-    x = tf.keras.layers.MaxPooling2D(strides=2)(x)
-    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Flatten()(images)
     x = tf.keras.layers.Dense(100, activation='relu')(x)
     logits = tf.keras.layers.Dense(10)(x)
 
