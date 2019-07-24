@@ -167,7 +167,7 @@ def run_audanet():
     estimator = adanet.Estimator(
     head=head,
     subnetwork_generator=CNNGenerator(),
-    max_iteration_steps=100,
+    max_iteration_steps=200,
     evaluator=adanet.Evaluator(
         input_fn=adanet_input_fn,
         steps=None),
@@ -177,7 +177,7 @@ def run_audanet():
     estimator,
     train_spec=tf.estimator.TrainSpec(
         input_fn=train_input_fn,
-        max_steps=100),
+        max_steps=200),
     eval_spec=tf.estimator.EvalSpec(
         input_fn=test_input_fn,
         steps=None))
