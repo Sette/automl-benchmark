@@ -131,7 +131,7 @@ def run_audanet():
     BATCH_SIZE = 32
 
     #x_train, y_train,x_test = load_images()
-    (x_train, labels_train), (x_test, labels_test) = tf.keras.datasets.cifar10.load_data()
+    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
 
     x_train = x_train / 255 # map values between 0 and 1
     x_test  = x_test / 255  # map values between 0 and 1
