@@ -37,37 +37,56 @@ def run_autokeras():
     #clf.final_fit(x_train, y_train, x_test, y_test, retrain=True)
     #y = clf.evaluate(x_test, y_test)
     #print(y * 100)
+
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten,Dense
+
+def cnn_model(features, labels, mode, params):
+    images = list(features.values())[0] # get values from dict
     
+    x = tf.keras.layers.Conv2D(32,
+                               kernel_size=7,
+                               activation='relu')(images)
+    x = tf.keras.layers.MaxPooling2D(strides=2)(x)
+    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Dense(100, activation='relu')(x)
+    logits = tf.keras.layers.Dense(10)(x)
 
 def run_audanet():
 
     x_train, y_train,x_test = load_images()
-    # Define the model head for computing loss and evaluation metrics.
-    head = MultiClassHead(n_classes=10)
+    EPOCHS = 10
+    BATCH_SIZE = 32
+    train_input_fn = tf.estimator.inputs.numpy_input_fn(
+        x={"x": x_train},
+        y=y_train,
+        batch_size=BATCH_SIZE,
+        num_epochs=EPOCHS,
+        shuffle=False)
 
-    # Feature columns define how to process examples.
-    feature_columns = ...
+    adanet_input_fn = tf.estimator.inputs.numpy_input_fn(
+        x={"x": x_train},
+        y=y_train,
+        batch_size=BATCH_SIZE,
+        num_epochs=1,
+        shuffle=False)
 
-    # Learn to ensemble linear and neural network models.
-    estimator = adanet.AutoEnsembleEstimator(
-        head=head,
-        candidate_pool={
-            "linear":
-                tf.estimator.LinearEstimator(
-                    head=head,
-                    feature_columns=feature_columns,
-                    optimizer=...),
-            "dnn":
-                tf.estimator.DNNEstimator(
-                    head=head,
-                    feature_columns=feature_columns,
-                    optimizer=...,
-                    hidden_units=[1000, 500, 100])},
-        max_iteration_steps=50)
+    test_input_fn = tf.estimator.inputs.numpy_input_fn(
+        x={"x": x_test},
+        batch_size=BATCH_SIZE,
+        num_epochs=1,
+        shuffle=False)
 
-    estimator.train(input_fn=x_train, steps=100)
-    metrics = estimator.evaluate(input_fn=y_train)
-    predictions = estimator.predict(input_fn=x_test)
+    classifier = tf.estimator.Estimator(model_fn=cnn_model)
+
+    results, _ = tf.estimator.train_and_evaluate(classifier,
+    train_spec=tf.estimator.TrainSpec(
+        input_fn=train_input_fn,
+        max_steps=EPOCHS),
+    eval_spec=tf.estimator.EvalSpec(
+        input_fn=test_input_fn,
+        steps=None))
+    print("Accuracy:", results["accuracy"])
+    print("Loss:", results["loss"])
 
 if __name__ == '__main__':
     run_audanet()
