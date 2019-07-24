@@ -181,6 +181,10 @@ def run_audanet():
     eval_spec=tf.estimator.EvalSpec(
         input_fn=test_input_fn,
         steps=None))
+    
+    predictions = estimator.predict(input_fn=test_input_fn)
+    print(predictions)
+
     print("Accuracy:", results["accuracy"])
     print("Loss:", results["average_loss"])
 
