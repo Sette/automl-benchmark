@@ -6,6 +6,7 @@ from autokeras.image.image_supervised import load_image_dataset
 import numpy as np
 import adanet
 import tensorflow as tf
+from keras.datasets import mnist
 
 data_dir = "datasets/dog-breed"
 
@@ -53,7 +54,8 @@ def cnn_model(features, labels, mode, params):
 
 def run_audanet():
 
-    x_train, y_train,x_test = load_images()
+    #x_train, y_train,x_test = load_images()
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
     x_train = x_train.astype(np.float32) # cast values to float32
     x_test = x_test.astype(np.float32)   # cast values to float32
