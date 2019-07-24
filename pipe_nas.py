@@ -139,8 +139,8 @@ def run_audanet():
     x_train = x_train.astype(np.float32) # cast values to float32
     x_test = x_test.astype(np.float32)   # cast values to float32
 
-    labels_train = labels_train.astype(np.int32) # cast values to int32
-    labels_test = labels_test.astype(np.int32)   # cast values to int32
+    y_train = y_train.astype(np.int32) # cast values to int32
+    y_test = y_test.astype(np.int32)   # cast values to int32
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
         x={"x": x_train},
         y=y_train,
