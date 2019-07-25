@@ -22,7 +22,21 @@ def load_dog_breed():
                                         images_path=data_dir+"/test")
     print(x_test[0].shape)
     
-    return x_train/255, y_train,x_test[0]/255
+    return x_train, y_train,x_test[0]
+
+def load_aerial_cactus():
+    data_dir = "datasets/aerial-cactus"
+    x_train, y_train = load_image_dataset(csv_file_path=data_dir+"/train.csv",
+                                          images_path=data_dir+"/train")
+    print(x_train.shape)
+    print(y_train.shape)
+
+    
+    x_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission.csv",
+                                        images_path=data_dir+"/test")
+    print(x_test[0].shape)
+    
+    return x_train, y_train,x_test[0]
     
 
 
