@@ -2,12 +2,12 @@
 # so the train and test directories reside in this directory 
 
 from autokeras import ImageClassifier
-from autokeras.image.image_supervised import load_image_dataset
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten,Dense
 import numpy as np
 import adanet
 import tensorflow as tf
 from keras.datasets import mnist
+from load_utils import *
 
 class CNNBuilder(adanet.subnetwork.Builder):
     def __init__(self, n_convs):
@@ -93,25 +93,10 @@ class CNNGenerator(adanet.subnetwork.Generator):
             self._cnn_builder_fn(n_convs=n_convs + 1)
         ]
 
-data_dir = "datasets/dog-breed"
-
-def load_images():
-    x_train, y_train = load_image_dataset(csv_file_path=data_dir+"/labels_real.csv",
-                                          images_path=data_dir+"/train")
-    print(x_train.shape)
-    print(y_train.shape)
-
-    
-    x_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission_real.csv",
-                                        images_path=data_dir+"/test")
-    print(x_test[0].shape)
-    
-    return x_train/255, y_train,x_test[0]/255
-    
 
 
 def run_autokeras():
-    x_train, y_train,x_test = load_images()
+    x_train, y_train,x_test = load_dog_breed()
     # After loading train and evaluate classifier.
     
     clf = ImageClassifier(verbose=True, augment=False)

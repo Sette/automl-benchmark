@@ -5,10 +5,25 @@ Spyder Editor
 Este é um arquivo de script temporário.
 """
 
+from autokeras.image.image_supervised import load_image_dataset
 import pandas as pd
 from sklearn import preprocessing
 
 
+def load_dog_breed():
+    data_dir = "datasets/dog-breed"
+    x_train, y_train = load_image_dataset(csv_file_path=data_dir+"/labels_real.csv",
+                                          images_path=data_dir+"/train")
+    print(x_train.shape)
+    print(y_train.shape)
+
+    
+    x_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission_real.csv",
+                                        images_path=data_dir+"/test")
+    print(x_test[0].shape)
+    
+    return x_train/255, y_train,x_test[0]/255
+    
 
 
 def load_house_prices():
