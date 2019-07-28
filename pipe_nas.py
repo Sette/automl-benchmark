@@ -117,8 +117,8 @@ def run_audanet():
     BATCH_SIZE = 32
 
     #x_train, y_train,x_test = load_images()
-    (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
-
+    x_train, y_train,x_test = load_invasive_species()
+        
     x_train = x_train / 255 # map values between 0 and 1
     x_test  = x_test / 255  # map values between 0 and 1
 
@@ -126,28 +126,28 @@ def run_audanet():
     x_test = x_test.astype(np.float32)   # cast values to float32
 
     y_train = y_train.astype(np.int32) # cast values to int32
-    y_test = y_test.astype(np.int32)   # cast values to int32
+
+    print(y_train)
 
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
-        x={"x": x_train},
-        y=y_train,
-        batch_size=BATCH_SIZE,
-        num_epochs=EPOCHS,
-        shuffle=False)
+            x={"x": x_train},
+            y=y_train,
+            batch_size=BATCH_SIZE,
+            num_epochs=EPOCHS,
+            shuffle=False)
 
     adanet_input_fn = tf.estimator.inputs.numpy_input_fn(
-        x={"x": x_train},
-        y=y_train,
-        batch_size=BATCH_SIZE,
-        num_epochs=1,
-        shuffle=False)
+            x={"x": x_train},
+            y=y_train,
+            batch_size=BATCH_SIZE,
+            num_epochs=1,
+            shuffle=False)
 
     test_input_fn = tf.estimator.inputs.numpy_input_fn(
-        x={"x": x_test},
-        y=y_test,
-        batch_size=BATCH_SIZE,
-        num_epochs=1,
-        shuffle=False)
+            x={"x": x_test},
+            batch_size=BATCH_SIZE,
+            num_epochs=1,
+            shuffle=False)
 
     head = tf.contrib.estimator.multi_class_head(10)
     estimator = adanet.Estimator(
@@ -155,9 +155,9 @@ def run_audanet():
     subnetwork_generator=CNNGenerator(),
     max_iteration_steps=200,
     evaluator=adanet.Evaluator(
-        input_fn=adanet_input_fn,
-        steps=None),
-    adanet_loss_decay=.99)
+            input_fn=adanet_input_fn,
+            steps=None),
+        adanet_loss_decay=.99)
 
     results, _ = tf.estimator.train_and_evaluate(
     estimator,
@@ -165,14 +165,27 @@ def run_audanet():
         input_fn=train_input_fn,
         max_steps=200),
     eval_spec=tf.estimator.EvalSpec(
-        input_fn=test_input_fn,
+        input_fn=train_input_fn,
         steps=None))
+
     
     predictions = estimator.predict(input_fn=test_input_fn)
-    print(predictions)
+    
+    preds = list()
+    for i, val in enumerate(predictions):
+        predicted_class = val['class_ids'][0]
+        print(val['probabilities'])
+        preds.append(predicted_class)
+        prediction_confidence = val['probabilities'][predicted_class] * 100
 
     print("Accuracy:", results["accuracy"])
     print("Loss:", results["average_loss"])
+
+    id_test = pd.read_csv("datasets/aerial-cactus/sample_submission.csv")
+
+    submission = pd.DataFrame({"id": id_test.id.values, "has_cactus": preds})
+
+    submission.to_csv("invasive_adanet_submission.csv", index=False)
 
 if __name__ == '__main__':
     run_audanet()
