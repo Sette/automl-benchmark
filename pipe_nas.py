@@ -96,7 +96,8 @@ class CNNGenerator(adanet.subnetwork.Generator):
 
 
 def run_autokeras():
-    x_train, y_train,x_test = load_dog_breed()
+    #x_train, y_train,x_test = load_dog_breed()
+    x_train, y_train,x_test = load_invasive_species()
     # After loading train and evaluate classifier.
     
     clf = ImageClassifier(verbose=True, augment=False)

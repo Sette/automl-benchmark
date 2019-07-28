@@ -9,6 +9,19 @@ from autokeras.image.image_supervised import load_image_dataset
 import pandas as pd
 from sklearn import preprocessing
 
+def load_invasive_species():
+    data_dir = "datasets/invasive-species"
+    x_train, y_train = load_image_dataset(csv_file_path=data_dir+"/train_labels_real.csv",
+                                          images_path=data_dir+"/train")
+    print(x_train.shape)
+    print(y_train.shape)
+
+    
+    x_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission_real.csv",
+                                        images_path=data_dir+"/test")
+    print(x_test[0].shape)
+    
+    return x_train, y_train,x_test[0]
 
 def load_dog_breed():
     data_dir = "datasets/dog-breed"
