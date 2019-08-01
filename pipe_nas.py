@@ -118,6 +118,8 @@ def run_adanet():
 
     #x_train, y_train,x_test = load_images()
     x_train, y_train,x_test = load_dog_breed()
+
+    y_train = pd.get_dummies(y_train)
         
     #x_train = x_train / 255 # map values between 0 and 1
     #x_test  = x_test / 255  # map values between 0 and 1
@@ -126,8 +128,10 @@ def run_adanet():
     #x_test = x_test.astype(np.float32)   # cast values to float32
 
     #y_train = y_train.astype(np.int32) # cast values to int32
-
+    
     print(y_train)
+
+    return
 
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
             x={"x": x_train},
