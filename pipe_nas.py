@@ -119,8 +119,6 @@ def run_adanet():
     #x_train, y_train,x_test = load_images()
     x_train, y_train,x_test = load_dog_breed()
 
-    y_train = y_train.as_matrix()
-
     y_train = y_train.reshape(y_train.shape[0],1)
         
     #x_train = x_train / 255 # map values between 0 and 1
