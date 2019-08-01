@@ -11,7 +11,7 @@ import pandas as pd
 h2o.init()
 
 all_datasets = [
-        ("microsoft_malware", load_microsoft_malware),
+        #("microsoft_malware", load_microsoft_malware),
         ("porto_seguro", load_porto_seguro),
         ("santander_customer", load_santander_customer),
         
@@ -54,7 +54,8 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
 
 def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):    
-    tp = TPOTClassifier(verbosity=3)
+    tp = TPOTClassifier(generations=5, population_size=20,
+                                    random_state=42, verbosity=2)
     start_time = timer(None)
     tp.fit(X_train, y_train)
     tp.export('tpot_pipeline_dont_overfit.py')
@@ -113,9 +114,10 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     
 
 all_models = [
-    ("autosk", autosk_fit_pred),
-    ("hyperopt", hyperopt_fit_pred),
-    ('h2o',h20_fit_pred),
+    ("tpot", tpot_fit_pred),
+    #("autosk", autosk_fit_pred),
+    #("hyperopt", hyperopt_fit_pred),
+    #('h2o',h20_fit_pred),
 ]
 
 for name_dataset, dataset in all_datasets:
