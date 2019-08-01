@@ -97,7 +97,7 @@ class CNNGenerator(adanet.subnetwork.Generator):
 
 def run_autokeras():
     #x_train, y_train,x_test = load_dog_breed()
-    x_train, y_train,x_test = load_invasive_species()
+    x_train, y_train,x_test = load_dog_breed()
     # After loading train and evaluate classifier.
     
     clf = ImageClassifier(verbose=True, augment=False)
@@ -111,21 +111,21 @@ def run_autokeras():
     #print(y * 100)
 
 
-def run_audanet():
+def run_adanet():
 
     EPOCHS = 10
     BATCH_SIZE = 32
 
     #x_train, y_train,x_test = load_images()
-    x_train, y_train,x_test = load_invasive_species()
+    x_train, y_train,x_test = load_dog_breed()
         
-    x_train = x_train / 255 # map values between 0 and 1
-    x_test  = x_test / 255  # map values between 0 and 1
+    #x_train = x_train / 255 # map values between 0 and 1
+    #x_test  = x_test / 255  # map values between 0 and 1
 
-    x_train = x_train.astype(np.float32) # cast values to float32
-    x_test = x_test.astype(np.float32)   # cast values to float32
+    #x_train = x_train.astype(np.float32) # cast values to float32
+    #x_test = x_test.astype(np.float32)   # cast values to float32
 
-    y_train = y_train.astype(np.int32) # cast values to int32
+    #y_train = y_train.astype(np.int32) # cast values to int32
 
     print(y_train)
 
@@ -149,7 +149,7 @@ def run_audanet():
             num_epochs=1,
             shuffle=False)
 
-    head = tf.contrib.estimator.multi_class_head(10)
+    head = tf.contrib.estimator.multi_class_head(120)
     estimator = adanet.Estimator(
     head=head,
     subnetwork_generator=CNNGenerator(),
@@ -188,4 +188,4 @@ def run_audanet():
     submission.to_csv("invasive_adanet_submission.csv", index=False)
 
 if __name__ == '__main__':
-    run_audanet()
+    run_adanet()
