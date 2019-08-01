@@ -123,13 +123,13 @@ def run_adanet():
 
     y_train = np.asarray(y_train)
         
-    #x_train = x_train / 255 # map values between 0 and 1
-    #x_test  = x_test / 255  # map values between 0 and 1
+    x_train = x_train / 255 # map values between 0 and 1
+    x_test  = x_test / 255  # map values between 0 and 1
 
-    #x_train = x_train.astype(np.float32) # cast values to float32
-    #x_test = x_test.astype(np.float32)   # cast values to float32
+    x_train = x_train.astype(np.float32) # cast values to float32
+    x_test = x_test.astype(np.float32)   # cast values to float32
 
-    #y_train = y_train.astype(np.int32) # cast values to int32
+    y_train = y_train.astype(np.int32) # cast values to int32
     
     print(y_train)
 
