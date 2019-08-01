@@ -119,7 +119,9 @@ def run_adanet():
     #x_train, y_train,x_test = load_images()
     x_train, y_train,x_test = load_dog_breed()
 
-    y_train = pd.get_dummies(y_train)
+    y_train = pd.get_dummies(y_train,sparse = True)
+
+    y_train = np.asarray(y_train)
         
     #x_train = x_train / 255 # map values between 0 and 1
     #x_test  = x_test / 255  # map values between 0 and 1
