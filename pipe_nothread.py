@@ -12,8 +12,13 @@ h2o.init()
 
 all_datasets = [
         #("microsoft_malware", load_microsoft_malware),
+<<<<<<< HEAD
+        ("porto_seguro", load_porto_seguro),
+        #("santander_customer", load_santander_customer),
+=======
         #("porto_seguro", load_porto_seguro),
         ("santander_customer", load_santander_customer),
+>>>>>>> e675636c0dfd6217cc6e8a1866d0875eda94d9ca
         
     ]
 

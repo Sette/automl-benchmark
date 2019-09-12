@@ -111,8 +111,9 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target
     
 
 all_models = [
+    ("tpot",tpot_fit_pred),
     ("hyperopt", hyperopt_fit_pred),
-    ("autosk", autosk_fit_pred),
+    #("autosk", autosk_fit_pred),
     ('h2o',h20_fit_pred),
 ]
 

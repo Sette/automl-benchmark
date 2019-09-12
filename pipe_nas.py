@@ -30,7 +30,7 @@ class CNNBuilder(adanet.subnetwork.Builder):
             x = MaxPooling2D(strides=2)(x)
         
         x = Flatten()(x)
-        x = Dense(100, activation='relu')(x)
+        x = Dense(10, activation='relu')(x)
         
         logits = Dense(10)(x)
 
@@ -102,7 +102,7 @@ def run_autokeras():
     
     clf = ImageClassifier(verbose=True, augment=False)
     clf.fit(x_train, y_train, time_limit=12 * 60 * 60)
-    clf.export_autokeras_model('best_auto_keras_model.h5')
+    clf.export_autokeras_model('best_auto_keras_model_dog_remake.h5')
     predictions = clf.predict(x_test)
     print(predictions)
 
@@ -126,13 +126,11 @@ def run_adanet():
     x_train = x_train / 255 # map values between 0 and 1
     x_test  = x_test / 255  # map values between 0 and 1
 
-    x_train = x_train.astype(np.float32) # cast values to float32
-    x_test = x_test.astype(np.float32)   # cast values to float32
+    #x_train = x_train.astype(np.float32) # cast values to float32
+    #x_test = x_test.astype(np.float32)   # cast values to float32
 
-    y_train = y_train.astype(np.int32) # cast values to int32
+    #y_train = y_train.astype(np.int32) # cast values to int32
     
-    print(y_train)
-
 
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
             x={"x": x_train},
@@ -193,4 +191,4 @@ def run_adanet():
     submission.to_csv("invasive_adanet_submission.csv", index=False)
 
 if __name__ == '__main__':
-    run_adanet()
+    run_autokeras()
