@@ -12,9 +12,9 @@ import logging
 h2o.init()
 
 all_datasets = [
-        ("porto_seguro", load_porto_seguro),
+        #("porto_seguro", load_porto_seguro),
         ("dont_overfit", load_dont_overfit),
-        ("santander_customer", load_santander_customer),
+        #("santander_customer", load_santander_customer),
     ]
 
 
@@ -37,7 +37,8 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time = timer(start_time)
     preds = aml.predict(test).as_data_frame()
     #Signal fuction
-    preds_final = [1 if x> 0.5 else 0 for x in preds.values]
+    print(preds)
+    return
 
     X_train.drop(columns=["target"],inplace=True)
 
@@ -127,11 +128,8 @@ for name_dataset, dataset in all_datasets:
 
     X_train, y_train, X_test, id_test = dataset()
 
-
     for name, model in all_models:
-
         logging.info("Training with ", name, ' in dataset: ', name_dataset)
-
         try:
             model(X_train,y_train,X_test,id_test,name_dataset)
         except Exception as e:
