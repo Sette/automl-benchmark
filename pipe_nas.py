@@ -1,6 +1,3 @@
-# To run first unzip ../load_raw_image_data.zip into ../
-# so the train and test directories reside in this directory 
-
 from autokeras import ImageClassifier
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten,Dense
 import numpy as np
@@ -8,6 +5,7 @@ import adanet
 import tensorflow as tf
 from keras.datasets import mnist
 from load_utils import *
+from devol import DEvol, GenomeHandler
 
 class CNNBuilder(adanet.subnetwork.Builder):
     def __init__(self, n_convs):
@@ -30,9 +28,9 @@ class CNNBuilder(adanet.subnetwork.Builder):
             x = MaxPooling2D(strides=2)(x)
         
         x = Flatten()(x)
-        x = Dense(10, activation='relu')(x)
+        x = Dense(120, activation='relu')(x)
         
-        logits = Dense(10)(x)
+        logits = Dense(120)(x)
 
         complexity = tf.constant(1)
 
@@ -96,15 +94,23 @@ class CNNGenerator(adanet.subnetwork.Generator):
 
 
 def run_autokeras():
+    #x_train, y_train,x_test = load_plant_seedlings()
     #x_train, y_train,x_test = load_dog_breed()
-    x_train, y_train,x_test = load_dog_breed()
+    x_train,y_train,x_text = load_invasive_species()
     # After loading train and evaluate classifier.
     
     clf = ImageClassifier(verbose=True, augment=False)
     clf.fit(x_train, y_train, time_limit=12 * 60 * 60)
-    clf.export_autokeras_model('best_auto_keras_model_dog_remake.h5')
+    clf.export_autokeras_model('best_auto_keras_model_invasive.h5')
     predictions = clf.predict(x_test)
     print(predictions)
+
+    submission = pd.DataFrame({
+        "target": predictions
+    })
+
+    submission.to_csv('invasive_'+'autokeras_submission.csv', index=False)
+
 
     #clf.final_fit(x_train, y_train, x_test, y_test, retrain=True)
     #y = clf.evaluate(x_test, y_test)
@@ -189,6 +195,23 @@ def run_adanet():
     submission = pd.DataFrame({"id": id_test.id.values, "has_cactus": preds})
 
     submission.to_csv("invasive_adanet_submission.csv", index=False)
+
+
+def run_devol():
+	X_train, y_train,X_test = load_dog_breed()
+	genome_handler = GenomeHandler(max_conv_layers=6, 
+                               max_dense_layers=2, # includes final dense layer
+                               max_filters=256,
+                               max_dense_nodes=1024,
+                               input_shape=X_train.shape[1:],
+                               n_classes=120)
+	devol = DEvol(genome_handler)
+	dataset = ((X_train,y_train),(X_train))
+	model = devol.run(dataset=dataset,
+                  num_generations=20,
+                  pop_size=20,
+                  epochs=5)
+	print(model.summary())
 
 if __name__ == '__main__':
     run_autokeras()
