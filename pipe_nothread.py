@@ -7,13 +7,14 @@ from benchmark_utils import timer
 import autosklearn.classification
 from hpsklearn import HyperoptEstimator
 import pandas as pd
+import logging
 
 h2o.init()
 
 all_datasets = [
-        ("porto_seguro", load_porto_seguro),
+        #("porto_seguro", load_porto_seguro),
         ("dont_overfit", load_dont_overfit),
-        ("santander_customer", load_santander_customer),
+        #("santander_customer", load_santander_customer),
     ]
 
 
@@ -36,7 +37,8 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time = timer(start_time)
     preds = aml.predict(test).as_data_frame()
     #Signal fuction
-    preds_final = [1 if x> 0.5 else 0 for x in preds.values]
+    print(preds)
+    return
 
     X_train.drop(columns=["target"],inplace=True)
 
@@ -57,7 +59,7 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
                                     random_state=42, verbosity=2)
     start_time = timer(None)
     tp.fit(X_train, y_train)
-    tp.export('tpot_pipeline_dont_overfit.py')
+    tp.export('tpot_pipeline_'+name_dataset+'.py')
     time = timer(start_time)
     preds = tp.predict(X_test)
 
@@ -70,7 +72,7 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
         "target": preds
     })
 
-    submission.to_csv(name_dataset+'_'+'tpot'+'_submission.csv', index=False)
+    submission.to_csv('submission_'+name_dataset+'_'+'tpot'+'.csv', index=False)
 
 
 def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
@@ -114,9 +116,9 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
 
 all_models = [
     ("tpot", tpot_fit_pred),
-    #("autosk", autosk_fit_pred),
-    #("hyperopt", hyperopt_fit_pred),
-    #('h2o',h20_fit_pred),
+    ("autosk", autosk_fit_pred),
+    ("hyperopt", hyperopt_fit_pred),
+    ('h2o',h20_fit_pred),
 ]
 
 for name_dataset, dataset in all_datasets:
@@ -126,15 +128,13 @@ for name_dataset, dataset in all_datasets:
 
     X_train, y_train, X_test, id_test = dataset()
 
-
     for name, model in all_models:
-        print("Training with ", name, ' in dataset: ', name_dataset)
+        logging.info("Training with ", name, ' in dataset: ', name_dataset)
         try:
             model(X_train,y_train,X_test,id_test,name_dataset)
         except Exception as e:
-            error_out = open('error_'+name_dataset+'_'+name,"w") 
-            print(e) 
+            error_out = open('error_'+name_dataset+'_'+name,"w")
             error_out.write(str(e))
             error_out.close() 
-            print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
+            logging.info("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
         

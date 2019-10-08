@@ -52,6 +52,22 @@ def load_aerial_cactus():
     return x_train, y_train,x_test[0]
     
 
+def load_plant_seedlings():
+    data_dir = "datasets/plant-seedlings"
+    x_train, y_train = load_image_dataset(csv_file_path=data_dir+"/train.csv",
+                                          images_path=data_dir+"/train_files")
+    print(x_train.shape)
+    print(y_train.shape)
+
+    
+    x_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission.csv",
+                                        images_path=data_dir+"/test")
+    print(x_test[0].shape)
+    
+    return x_train, y_train,x_test[0]
+
+
+
 
 def load_house_prices():
     overfit_filepath_train = "datasets/house-prices/train.csv"

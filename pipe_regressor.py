@@ -21,10 +21,12 @@ all_datasets = [
 submissions = []
 threads = list()
 
-def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name):
+def h2o_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name):
     X_train_cp = X_train.copy()
     X_train_cp[target_name] = y_train
     start_time = timer(None)
+    print(X_train_cp.head)
+
     train = h2o.H2OFrame.from_python(X_train_cp)
     test = h2o.H2OFrame.from_python(X_test)
     
@@ -36,8 +38,10 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name
     aml = H2OAutoML()
     aml.train(x=x, y=y, training_frame=train)
     time = timer(start_time)
+    print("FIT maked")
+    print(test)
     preds = aml.predict(test).as_data_frame().values
-
+    print("Predict maked")
     time_out = open(name_dataset+'_'+'h2o',"w") 
     time_out.write(time) 
     time_out.close() 
@@ -47,7 +51,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name
         target_name: preds
     })
 
-    submission.to_csv(name_dataset+'_'+'h2o'+'_submission.csv', index=False)
+    submission.to_csv('submission_'+name_dataset+'_'+'h2o.csv', index=False)
 
 
 def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name ):    
@@ -67,7 +71,7 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_nam
         target_name: preds
     })
 
-    submission.to_csv(name_dataset+'_'+'tpot'+'_submission.csv', index=False)
+    submission.to_csv('submission_'+name_dataset+'_'+'tpot.csv', index=False)
 
 
 def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name ):
@@ -88,7 +92,7 @@ def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_n
         target_name: preds
     })
 
-    submission.to_csv(name_dataset+'_'+'autosk'+'_submission.csv', index=False)
+    submission.to_csv('submission_'+name_dataset+'_'+'autosk.csv', index=False)
     
 
 def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name ):
@@ -107,14 +111,14 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target
         target_name: preds
     })
 
-    submission.to_csv(name_dataset+'_'+'hyperopt'+'_submission.csv', index=False)
+    submission.to_csv('submission_'+name_dataset+'_'+'hyperopt.csv', index=False)
     
 
 all_models = [
+    ("h2o",h2o_fit_pred),
     ("tpot",tpot_fit_pred),
     ("hyperopt", hyperopt_fit_pred),
-    #("autosk", autosk_fit_pred),
-    ('h2o',h20_fit_pred),
+    ("autosk", autosk_fit_pred),
 ]
 
 
@@ -135,8 +139,3 @@ for name_dataset, dataset in all_datasets:
             error_out.write(str(e))
             error_out.close() 
             print("Erro no expermento. dataset: ", name_dataset, "automl: ", name)
-    
-    
-
-    
-    print("Fim das threads")
