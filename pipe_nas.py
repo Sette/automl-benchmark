@@ -95,22 +95,19 @@ class CNNGenerator(adanet.subnetwork.Generator):
 
 def run_autokeras():
     #x_train, y_train,x_test = load_plant_seedlings()
-    #x_train, y_train,x_test = load_dog_breed()
-    x_train,y_train,x_text = load_invasive_species()
+    x_train, y_train,x_test = load_dog_breed()
+    #x_train,y_train,x_text = load_invasive_species()
     # After loading train and evaluate classifier.
     
     clf = ImageClassifier(verbose=True, augment=False)
     clf.fit(x_train, y_train, time_limit=12 * 60 * 60)
-    clf.export_autokeras_model('best_auto_keras_model_invasive.h5')
+    clf.save("keras_model_dog")
+    clf.export_autokeras_model('best_auto_keras_model_dog_v2.h5')
     predictions = clf.predict(x_test)
     print(predictions)
+    df = pd.DataFrame(clf.predict_proba(x_test))
 
-    submission = pd.DataFrame({
-        "target": predictions
-    })
-
-    submission.to_csv('invasive_'+'autokeras_submission.csv', index=False)
-
+    df.to_csv("dog_breed.csv",index=False)
 
     #clf.final_fit(x_train, y_train, x_test, y_test, retrain=True)
     #y = clf.evaluate(x_test, y_test)

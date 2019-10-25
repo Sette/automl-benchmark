@@ -39,9 +39,10 @@ def h2o_fit_pred(X_train,y_train,X_test,id_test,name_dataset,id_name,target_name
     aml.train(x=x, y=y, training_frame=train)
     time = timer(start_time)
     print("FIT maked")
-    print(test)
-    preds = aml.predict(test).as_data_frame().values
+    #print(test)
+    preds = aml.predict(test).as_data_frame().values[0]
     print("Predict maked")
+    print(preds)
     time_out = open(name_dataset+'_'+'h2o',"w") 
     time_out.write(time) 
     time_out.close() 
