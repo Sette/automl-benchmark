@@ -12,9 +12,9 @@ import logging
 h2o.init()
 
 all_datasets = [
-        #("porto_seguro", load_porto_seguro),
+        ("porto_seguro", load_porto_seguro),
         ("dont_overfit", load_dont_overfit),
-        #("santander_customer", load_santander_customer),
+        ("santander_customer", load_santander_customer),
     ]
 
 
@@ -37,12 +37,11 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time = timer(start_time)
     preds = aml.predict(test).as_data_frame()
     #Signal fuction
-    print(preds)
-    return
+    preds_final = [1 if x> 0.5 else 0 for x in preds.values]
 
     X_train.drop(columns=["target"],inplace=True)
 
-    time_out = open(name_dataset+'_'+'h2o',"w") 
+    time_out = open("time_files/"+name_dataset+'_'+'h2o',"w") 
     time_out.write(time) 
     time_out.close() 
 
@@ -51,7 +50,7 @@ def h20_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
         "target": preds_final
     })
 
-    submission.to_csv(name_dataset+'_'+'h2o'+'_submission.csv', index=False)
+    submission.to_csv("submit_files/"+name_dataset+'_'+'h2o'+'_submission.csv', index=False)
 
 
 def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):    
@@ -63,7 +62,7 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time = timer(start_time)
     preds = tp.predict(X_test)
 
-    time_out = open(name_dataset+'_'+'tpot',"w") 
+    time_out = open("time_files/"+name_dataset+'_'+'tpot',"w") 
     time_out.write(time) 
     time_out.close() 
 
@@ -72,18 +71,18 @@ def tpot_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
         "target": preds
     })
 
-    submission.to_csv('submission_'+name_dataset+'_'+'tpot'+'.csv', index=False)
+    submission.to_csv("submit_files/"+name_dataset+'_'+'tpot_submission'+'.csv', index=False)
 
 
 def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
-    ak = autosklearn.classification.AutoSklearnClassifier()
+    ak = autosklearn.classification.AutoSklearnClassifier(ml_memory_limit=129024)
     start_time = timer(None)
     ak.fit(X_train.copy(), y_train.copy())
     ak.refit(X_train.copy(), y_train.copy())
     time = timer(start_time)
     preds =  ak.predict(X_test.copy())
 
-    time_out = open(name_dataset+'_'+'autosk',"w") 
+    time_out = open("time_files/"+name_dataset+'_'+'autosk',"w") 
     time_out.write(time) 
     time_out.close() 
 
@@ -92,7 +91,7 @@ def autosk_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
         "target": preds
     })
 
-    submission.to_csv(name_dataset+'_'+'autosk'+'_submission.csv', index=False)
+    submission.to_csv("submit_files/"+name_dataset+'_'+'autosk'+'_submission.csv', index=False)
     
 
 def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
@@ -102,7 +101,7 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
     time = timer(start_time)
     preds =  hp.predict(X_test.as_matrix())
     
-    time_out = open(name_dataset+'_'+'hyperopt',"w") 
+    time_out = open("time_files/"+name_dataset+'_'+'hyperopt',"w") 
     time_out.write(time) 
     time_out.close() 
 
@@ -111,13 +110,13 @@ def hyperopt_fit_pred(X_train,y_train,X_test,id_test,name_dataset):
         "target": preds
     })
 
-    submission.to_csv(name_dataset+'_'+'hyperopt'+'_submission.csv', index=False)
+    submission.to_csv("submit_files/"+name_dataset+'_'+'hyperopt'+'_submission.csv', index=False)
     
 
 all_models = [
-    ("tpot", tpot_fit_pred),
     ("autosk", autosk_fit_pred),
-    ("hyperopt", hyperopt_fit_pred),
+    ("tpot", tpot_fit_pred),
+    #("hyperopt", hyperopt_fit_pred),
     ('h2o',h20_fit_pred),
 ]
 
@@ -133,7 +132,7 @@ for name_dataset, dataset in all_datasets:
         try:
             model(X_train,y_train,X_test,id_test,name_dataset)
         except Exception as e:
-            error_out = open('error_'+name_dataset+'_'+name,"w")
+            error_out = open('error_files/error_'+name_dataset+'_'+name,"w")
             error_out.write(str(e))
             error_out.close() 
             logging.info("Erro no expermento. dataset: ", name_dataset, "automl: ", name)

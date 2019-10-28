@@ -16,12 +16,11 @@ def load_invasive_species():
     print(x_train.shape)
     print(y_train.shape)
 
-    
-    x_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission_real.csv",
+    x_test,y_test = load_image_dataset(csv_file_path=data_dir+"/sample_submission_real.csv",
                                         images_path=data_dir+"/test")
-    print(x_test[0].shape)
+    print(x_test.shape)
     
-    return x_train, y_train,x_test[0]
+    return x_train, y_train,x_test
 
 def load_dog_breed():
     data_dir = "datasets/dog-breed"
@@ -77,7 +76,7 @@ def load_house_prices():
     
     y_train = pd.to_numeric(data_train['SalePrice'])
 
-    data_train.drop(columns=['SalePrice','Id'],inplace=True)
+    data_train.drop(columns=['SalePrice','Id','MSZoning'],inplace=True)
     id_test = data_test.Id
     data_test.drop(columns=['Id'],inplace=True)
 
